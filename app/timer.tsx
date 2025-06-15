@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Platform } from 'react-native';
 import { router } from 'expo-router';
-import { Pause, Play, X, Volume2, VolumeX } from 'lucide-react-native';
 import * as Haptics from 'expo-haptics';
 import { LinearGradient } from 'expo-linear-gradient';
 import Colors from '@/constants/colors';
@@ -10,6 +9,7 @@ import { useUserStore } from '@/store/userStore';
 import ProgressCircle from '@/components/ProgressCircle';
 import Button from '@/components/Button';
 import VideoChat from '@/components/VideoChat';
+import { PauseIcon, PlayIcon, XIcon, Volume2Icon, VolumeXIcon } from '@/components/icons';
 
 export default function TimerScreen() {
   const { currentSession, clearCurrentSession } = useSessionStore();
@@ -74,6 +74,9 @@ export default function TimerScreen() {
   const sessionType = currentSession?.type as 'duo' | 'group';
   const participantCount = currentSession?.type === 'duo' ? 2 : 
                           currentSession?.type === 'group' ? 4 : 1;
+  
+  // Safely check if participants exist and have length
+  const hasParticipants = currentSession?.participants && currentSession.participants.length > 0;
 
   return (
     <LinearGradient
@@ -82,14 +85,14 @@ export default function TimerScreen() {
     >
       <View style={styles.header}>
         <TouchableOpacity onPress={handleCancel} style={styles.closeButton}>
-          <X size={24} color={Colors.text} />
+          <XIcon size={24} color={Colors.text} />
         </TouchableOpacity>
         
         <TouchableOpacity onPress={toggleMute} style={styles.muteButton}>
           {isMuted ? (
-            <VolumeX size={24} color={Colors.text} />
+            <VolumeXIcon size={24} color={Colors.text} />
           ) : (
-            <Volume2 size={24} color={Colors.text} />
+            <Volume2Icon size={24} color={Colors.text} />
           )}
         </TouchableOpacity>
       </View>
@@ -105,7 +108,7 @@ export default function TimerScreen() {
           <VideoChat 
             sessionType={sessionType} 
             participants={participantCount}
-            isGroupSession={currentSession?.participants ? currentSession.participants.length > 0 : false}
+            isGroupSession={hasParticipants}
           />
         ) : (
           <View style={styles.timerContainer}>
@@ -122,9 +125,9 @@ export default function TimerScreen() {
               onPress={toggleTimer}
             >
               {isActive ? (
-                <Pause size={32} color={Colors.primary} />
+                <PauseIcon size={32} color={Colors.primary} />
               ) : (
-                <Play size={32} color={Colors.primary} />
+                <PlayIcon size={32} color={Colors.primary} />
               )}
             </TouchableOpacity>
           </View>

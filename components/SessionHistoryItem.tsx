@@ -1,9 +1,9 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { Coffee, Users, User } from 'lucide-react-native';
 import Colors from '@/constants/colors';
 import Card from './Card';
 import { FikaSession } from '@/types';
+import { CoffeeIcon, UsersIcon, UserIcon } from './icons';
 
 interface SessionHistoryItemProps {
   session: FikaSession;
@@ -22,13 +22,13 @@ export default function SessionHistoryItem({ session }: SessionHistoryItemProps)
   const getIcon = () => {
     switch (session.type) {
       case 'solo':
-        return <User size={20} color={Colors.primary} />;
+        return <UserIcon size={20} color={Colors.primary} />;
       case 'duo':
-        return <Users size={20} color={Colors.primary} />;
+        return <UsersIcon size={20} color={Colors.primary} />;
       case 'group':
-        return <Users size={20} color={Colors.primary} />;
+        return <UsersIcon size={20} color={Colors.primary} />;
       default:
-        return <Coffee size={20} color={Colors.primary} />;
+        return <CoffeeIcon size={20} color={Colors.primary} />;
     }
   };
 

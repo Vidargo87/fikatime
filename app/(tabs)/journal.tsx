@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
-import { Calendar, Filter } from 'lucide-react-native';
 import Colors from '@/constants/colors';
 import { useSessionStore } from '@/store/sessionStore';
 import { useUserStore } from '@/store/userStore';
 import SessionHistoryItem from '@/components/SessionHistoryItem';
 import Card from '@/components/Card';
+import { CalendarIcon, FilterIcon } from '@/components/icons';
 
 export default function JournalScreen() {
   const { sessions } = useSessionStore();
@@ -19,7 +19,7 @@ export default function JournalScreen() {
 
   const renderEmptyState = () => (
     <Card style={styles.emptyStateCard}>
-      <Calendar size={48} color={Colors.textLight} style={styles.emptyStateIcon} />
+      <CalendarIcon size={48} color={Colors.textLight} style={styles.emptyStateIcon} />
       <Text style={styles.emptyStateTitle}>No Fika sessions yet</Text>
       <Text style={styles.emptyStateText}>
         Your Fika reflections will appear here after you complete your first session.

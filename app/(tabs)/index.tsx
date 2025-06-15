@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, Modal } from 'react-native';
 import { router } from 'expo-router';
-import { Coffee, UserPlus } from 'lucide-react-native';
 import Colors from '@/constants/colors';
 import { useUserStore } from '@/store/userStore';
 import { useSessionStore } from '@/store/sessionStore';
@@ -12,6 +11,7 @@ import Card from '@/components/Card';
 import Button from '@/components/Button';
 import LanguageFilter from '@/components/LanguageFilter';
 import FriendInviteModal from '@/components/FriendInviteModal';
+import { CoffeeIcon, UserPlusIcon } from '@/components/icons';
 
 export default function HomeScreen() {
   const { user, updateProfile } = useUserStore();
@@ -82,11 +82,22 @@ export default function HomeScreen() {
     setShowFriendInviteModal(true);
   };
 
+  // Ensure we have valid data before rendering
+  if (!user) {
+    return (
+      <View style={styles.container}>
+        <View style={styles.loadingContainer}>
+          <Text style={styles.loadingText}>Loading...</Text>
+        </View>
+      </View>
+    );
+  }
+
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       <View style={styles.header}>
         <Text style={styles.greeting}>
-          {user?.name ? `Hello, ${user.name}` : 'Welcome to FikaTime'}
+          {user.name ? `Hello, ${user.name}` : 'Welcome to FikaTime'}
         </Text>
         <Text style={styles.subtitle}>
           Take a mindful break and boost your wellbeing
@@ -95,10 +106,10 @@ export default function HomeScreen() {
 
       <Card variant="elevated" style={styles.topicCard}>
         <View style={styles.topicHeader}>
-          <Coffee size={20} color={Colors.primary} />
+          <CoffeeIcon size={20} color={Colors.primary} />
           <Text style={styles.topicTitle}>Today's Topic</Text>
         </View>
-        <Text style={styles.topicText}>{dailyTopic}</Text>
+        <Text style={styles.topicText}>{dailyTopic || 'Take a moment to reflect'}</Text>
       </Card>
 
       <View style={styles.actionButtons}>
@@ -106,7 +117,7 @@ export default function HomeScreen() {
           title="Invite a Friend"
           variant="outline"
           onPress={handleInviteFriend}
-          icon={<UserPlus size={18} color={Colors.primary} style={{ marginRight: 8 }} />}
+          icon={<UserPlusIcon size={18} color={Colors.primary} style={{ marginRight: 8 }} />}
           style={styles.inviteButton}
         />
       </View>
@@ -131,11 +142,11 @@ export default function HomeScreen() {
         title="Group Fika"
         description="Enjoy a 20-minute break with up to 5 people"
         type="group"
-        isPremium={user?.isPremium}
+        isPremium={user.isPremium}
         onPress={handleStartGroupFika}
       />
 
-      {!user?.isPremium && (
+      {!user.isPremium && (
         <Card style={styles.premiumCard}>
           <Text style={styles.premiumTitle}>Upgrade to Premium</Text>
           <Text style={styles.premiumDescription}>
@@ -150,7 +161,7 @@ export default function HomeScreen() {
         </Card>
       )}
 
-      {user?.fikaStreak && user.fikaStreak > 0 && (
+      {user.fikaStreak && user.fikaStreak > 0 && (
         <View style={styles.streakContainer}>
           <Text style={styles.streakText}>
             🔥 {user.fikaStreak} day{user.fikaStreak !== 1 ? 's' : ''} streak! Keep it up!
@@ -193,6 +204,15 @@ const styles = StyleSheet.create({
   content: {
     padding: 16,
     paddingBottom: 32,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadingText: {
+    fontSize: 16,
+    color: Colors.textLight,
   },
   header: {
     marginBottom: 24,

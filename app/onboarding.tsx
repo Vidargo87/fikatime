@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TextInput, ScrollView, Platform } from 'react-native';
 import { router } from 'expo-router';
-import { Coffee } from 'lucide-react-native';
 import Colors from '@/constants/colors';
 import { useUserStore } from '@/store/userStore';
 import Button from '@/components/Button';
+import { CoffeeIcon } from '@/components/icons';
 
 export default function OnboardingScreen() {
   const { setUser } = useUserStore();
@@ -38,7 +38,7 @@ export default function OnboardingScreen() {
       keyboardShouldPersistTaps="handled"
     >
       <View style={styles.logoContainer}>
-        <Coffee size={48} color={Colors.primary} />
+        <CoffeeIcon size={48} color={Colors.primary} />
         <Text style={styles.logoText}>FikaTime</Text>
       </View>
       

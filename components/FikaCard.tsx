@@ -1,8 +1,8 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { Coffee, Users, User } from 'lucide-react-native';
 import Colors from '@/constants/colors';
 import Card from './Card';
+import { CoffeeIcon, UsersIcon, UserIcon } from './icons';
 
 interface FikaCardProps {
   title: string;
@@ -22,13 +22,13 @@ export default function FikaCard({
   const getIcon = () => {
     switch (type) {
       case 'solo':
-        return <User size={24} color={Colors.primary} />;
+        return <UserIcon size={24} color={Colors.primary} />;
       case 'duo':
-        return <Users size={24} color={Colors.primary} />;
+        return <UsersIcon size={24} color={Colors.primary} />;
       case 'group':
-        return <Users size={24} color={isPremium ? Colors.primary : Colors.inactive} />;
+        return <UsersIcon size={24} color={isPremium ? Colors.primary : Colors.inactive} />;
       default:
-        return <Coffee size={24} color={Colors.primary} />;
+        return <CoffeeIcon size={24} color={Colors.primary} />;
     }
   };
 

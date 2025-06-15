@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TextInput, Switch, Alert, Platform, TouchableOpacity } from 'react-native';
-import { User, Settings, LogOut, Award, Coffee, Globe, Users } from 'lucide-react-native';
 import Colors from '@/constants/colors';
 import { useUserStore } from '@/store/userStore';
 import { useSessionStore } from '@/store/sessionStore';
@@ -8,6 +7,7 @@ import Button from '@/components/Button';
 import Card from '@/components/Card';
 import AvatarPicker from '@/components/AvatarPicker';
 import { languages } from '@/constants/languages';
+import { UserIcon, SettingsIcon, LogOutIcon, AwardIcon, CoffeeIcon, GlobeIcon, UsersIcon } from '@/components/icons';
 
 export default function ProfileScreen() {
   const { user, updateProfile, updateAvatar, updateLanguage, updatePreferredConnectionLanguages, logout } = useUserStore();
@@ -120,7 +120,7 @@ export default function ProfileScreen() {
       {!user?.isPremium && (
         <Card style={styles.premiumCard}>
           <View style={styles.premiumHeader}>
-            <Award size={24} color={Colors.secondary} />
+            <AwardIcon size={24} color={Colors.secondary} />
             <Text style={styles.premiumTitle}>Upgrade to Premium</Text>
           </View>
           <Text style={styles.premiumDescription}>
@@ -196,7 +196,7 @@ export default function ProfileScreen() {
             }}
           >
             <Text style={styles.languageText}>{getCurrentLanguageName()}</Text>
-            <Globe size={16} color={Colors.primary} style={{ marginLeft: 6 }} />
+            <GlobeIcon size={16} color={Colors.primary} style={{ marginLeft: 6 }} />
           </TouchableOpacity>
         </View>
 
@@ -234,7 +234,7 @@ export default function ProfileScreen() {
             <Text style={styles.languageText}>
               {user?.preferredConnectionLanguages?.length || 1} selected
             </Text>
-            <Globe size={16} color={Colors.primary} style={{ marginLeft: 6 }} />
+            <GlobeIcon size={16} color={Colors.primary} style={{ marginLeft: 6 }} />
           </TouchableOpacity>
         </View>
 
@@ -282,7 +282,7 @@ export default function ProfileScreen() {
 
       <View style={styles.statsCard}>
         <View style={styles.statItem}>
-          <Coffee size={24} color={Colors.primary} />
+          <CoffeeIcon size={24} color={Colors.primary} />
           <Text style={styles.statValue}>{sessions.length}</Text>
           <Text style={styles.statLabel}>Total Fikas</Text>
         </View>
@@ -295,7 +295,7 @@ export default function ProfileScreen() {
         </View>
         
         <View style={styles.statItem}>
-          <Users size={24} color={Colors.primary} />
+          <UsersIcon size={24} color={Colors.primary} />
           <Text style={styles.statValue}>
             {/* In a real app, this would be the actual friend count */}
             2
@@ -309,7 +309,7 @@ export default function ProfileScreen() {
         variant="outline"
         onPress={handleLogout}
         style={styles.logoutButton}
-        icon={<LogOut size={18} color={Colors.primary} style={{ marginRight: 8 }} />}
+        icon={<LogOutIcon size={18} color={Colors.primary} style={{ marginRight: 8 }} />}
       />
     </ScrollView>
   );

@@ -10,11 +10,11 @@ import {
   Platform
 } from 'react-native';
 import { router, Link } from 'expo-router';
-import { Coffee, Mail, Lock, LogIn } from 'lucide-react-native';
 import Colors from '@/constants/colors';
 import { useUserStore } from '@/store/userStore';
 import Button from '@/components/Button';
 import { defaultLanguage } from '@/constants/languages';
+import { CoffeeIcon, MailIcon, LockIcon, LogInIcon } from '@/components/icons';
 
 export default function LoginScreen() {
   const { setUser } = useUserStore();
@@ -81,7 +81,7 @@ export default function LoginScreen() {
       keyboardShouldPersistTaps="handled"
     >
       <View style={styles.logoContainer}>
-        <Coffee size={48} color={Colors.primary} />
+        <CoffeeIcon size={48} color={Colors.primary} />
         <Text style={styles.logoText}>FikaTime</Text>
       </View>
       
@@ -92,7 +92,7 @@ export default function LoginScreen() {
       
       <View style={styles.form}>
         <View style={styles.inputContainer}>
-          <Mail size={20} color={Colors.textLight} style={styles.inputIcon} />
+          <MailIcon size={20} color={Colors.textLight} style={styles.inputIcon} />
           <TextInput
             style={styles.input}
             value={email}
@@ -105,7 +105,7 @@ export default function LoginScreen() {
         </View>
         
         <View style={styles.inputContainer}>
-          <Lock size={20} color={Colors.textLight} style={styles.inputIcon} />
+          <LockIcon size={20} color={Colors.textLight} style={styles.inputIcon} />
           <TextInput
             style={styles.input}
             value={password}
@@ -120,7 +120,7 @@ export default function LoginScreen() {
           title="Sign In"
           onPress={handleLogin}
           loading={loading}
-          icon={<LogIn size={18} color="#FFFFFF" style={{ marginRight: 8 }} />}
+          icon={<LogInIcon size={18} color="#FFFFFF" style={{ marginRight: 8 }} />}
           style={styles.loginButton}
         />
       </View>

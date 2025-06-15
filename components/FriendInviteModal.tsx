@@ -9,11 +9,11 @@ import {
   Alert,
   TextInput
 } from 'react-native';
-import { X, Coffee, Clock, Calendar } from 'lucide-react-native';
 import Colors from '@/constants/colors';
 import { Friend } from '@/store/friendsStore';
 import Card from './Card';
 import Button from './Button';
+import { XIcon, CoffeeIcon, ClockIcon, CalendarIcon } from './icons';
 
 interface FriendInviteModalProps {
   friends: Friend[];
@@ -73,12 +73,12 @@ export default function FriendInviteModal({
       <View style={styles.modalOverlay}>
         <Card style={styles.modalContent}>
           <View style={styles.header}>
-            <Coffee size={24} color={Colors.primary} />
+            <CoffeeIcon size={24} color={Colors.primary} />
             <Text style={styles.title}>
               {step === 'select' ? 'Invite a Friend to Fika' : 'Schedule Fika'}
             </Text>
             <TouchableOpacity onPress={onClose} style={styles.closeButton}>
-              <X size={24} color={Colors.textLight} />
+              <XIcon size={24} color={Colors.textLight} />
             </TouchableOpacity>
           </View>
           
@@ -120,7 +120,7 @@ export default function FriendInviteModal({
                         <Text style={styles.friendName}>{item.name}</Text>
                         {item.showFikaTime && item.preferredFikaTime && (
                           <View style={styles.fikaTimeContainer}>
-                            <Clock size={12} color={Colors.textLight} style={styles.fikaTimeIcon} />
+                            <ClockIcon size={12} color={Colors.textLight} style={styles.fikaTimeIcon} />
                             <Text style={styles.fikaTimeText}>
                               Prefers Fika at {item.preferredFikaTime}
                             </Text>
@@ -148,7 +148,7 @@ export default function FriendInviteModal({
               
               <Text style={styles.inputLabel}>Time</Text>
               <View style={styles.inputContainer}>
-                <Clock size={20} color={Colors.textLight} style={styles.inputIcon} />
+                <ClockIcon size={20} color={Colors.textLight} style={styles.inputIcon} />
                 <TextInput
                   style={styles.input}
                   value={inviteTime}
@@ -160,7 +160,7 @@ export default function FriendInviteModal({
               
               <Text style={styles.inputLabel}>Date</Text>
               <View style={styles.inputContainer}>
-                <Calendar size={20} color={Colors.textLight} style={styles.inputIcon} />
+                <CalendarIcon size={20} color={Colors.textLight} style={styles.inputIcon} />
                 <TextInput
                   style={styles.input}
                   value={inviteDate}
