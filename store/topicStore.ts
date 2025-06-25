@@ -40,7 +40,7 @@ export const useTopicStore = create<TopicState>()(
         return (state) => {
           // Check if we need to update the topic
           if (state && (isNewDay(state.lastUpdated) || !state.dailyTopic)) {
-            // We need to get the set function again since we're in a new scope
+            // Use the store's setState method instead of 'set'
             useTopicStore.setState({
               dailyTopic: getTodayTopic(),
               lastUpdated: new Date().toISOString()
