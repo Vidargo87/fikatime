@@ -9,6 +9,7 @@ export default function IndexScreen() {
   const { isLoggedIn, user, isLoading: userLoading } = useUser();
   const { dailyTopic, refreshTopic, isLoading: topicLoading } = useTopic();
   const [isLoading, setIsLoading] = useState(true);
+  const [navigationAttempted, setNavigationAttempted] = useState(false);
 
   useEffect(() => {
     // Initialize the app
@@ -25,7 +26,10 @@ export default function IndexScreen() {
         // Navigate based on login state
         if (!userLoading && !topicLoading) {
           if (isLoggedIn && user) {
-            // On Android, add a small delay to ensure navigation works properly
+            console.log('Navigating to tabs, user is logged in');
+            setNavigationAttempted(true);
+            
+            // On Android, use a different approach to ensure navigation works
             if (Platform.OS === 'android') {
               setTimeout(() => {
                 router.replace('/(tabs)');
@@ -34,12 +38,15 @@ export default function IndexScreen() {
               router.replace('/(tabs)');
             }
           } else {
+            console.log('Navigating to login, user is not logged in');
+            setNavigationAttempted(true);
             router.replace('/login');
           }
         }
       } catch (error) {
         console.error('Error initializing app:', error);
         // Ensure we navigate away from splash screen even if there's an error
+        setNavigationAttempted(true);
         router.replace('/login');
       } finally {
         setIsLoading(false);
@@ -53,6 +60,22 @@ export default function IndexScreen() {
 
     return () => clearTimeout(timer);
   }, [isLoggedIn, user, dailyTopic, userLoading, topicLoading]);
+
+  // Safety mechanism: if we're still on this screen after 3 seconds, force navigation
+  useEffect(() => {
+    const safetyTimer = setTimeout(() => {
+      if (!navigationAttempted) {
+        console.log('Safety timer triggered - forcing navigation');
+        if (isLoggedIn && user) {
+          router.replace('/(tabs)');
+        } else {
+          router.replace('/login');
+        }
+      }
+    }, 3000);
+
+    return () => clearTimeout(safetyTimer);
+  }, [navigationAttempted, isLoggedIn, user]);
 
   if (isLoading || userLoading || topicLoading) {
     return (

@@ -30,15 +30,20 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     const loadUserData = async () => {
       try {
+        console.log('Loading user data from storage');
         const userData = await AsyncStorage.getItem('fika-user-data');
         if (userData) {
+          console.log('User data found in storage');
           const parsedData = JSON.parse(userData);
           setUserState(parsedData.user);
           setIsLoggedIn(parsedData.isLoggedIn);
+        } else {
+          console.log('No user data found in storage');
         }
       } catch (error) {
         console.error('Error loading user data:', error);
       } finally {
+        console.log('User loading complete');
         setIsLoading(false);
       }
     };
@@ -50,19 +55,21 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     const saveUserData = async () => {
       try {
-        const userData = JSON.stringify({ user, isLoggedIn });
-        await AsyncStorage.setItem('fika-user-data', userData);
+        if (!isLoading) {
+          console.log('Saving user data to storage');
+          const userData = JSON.stringify({ user, isLoggedIn });
+          await AsyncStorage.setItem('fika-user-data', userData);
+        }
       } catch (error) {
         console.error('Error saving user data:', error);
       }
     };
 
-    if (!isLoading) {
-      saveUserData();
-    }
+    saveUserData();
   }, [user, isLoggedIn, isLoading]);
 
   const setUser = (newUser: UserProfile) => {
+    console.log('Setting user:', newUser.name);
     setUserState({
       ...newUser,
       language: newUser.language || defaultLanguage,
@@ -151,6 +158,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const logout = () => {
+    console.log('Logging out user');
     setUserState(null);
     setIsLoggedIn(false);
   };

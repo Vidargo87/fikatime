@@ -3,11 +3,17 @@ import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
-import { StatusBar } from "expo-status-bar";
+import { StatusBar, LogBox } from "react-native";
 import Colors from "@/constants/colors";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { trpc, trpcClient } from "@/lib/trpc";
 import { AppProviders } from "@/contexts";
+
+// Ignore specific warnings that might be causing issues
+LogBox.ignoreLogs([
+  'Non-serializable values were found in the navigation state',
+  'Sending `onAnimatedValueUpdate` with no listeners registered'
+]);
 
 export const unstable_settings = {
   initialRouteName: "(tabs)",

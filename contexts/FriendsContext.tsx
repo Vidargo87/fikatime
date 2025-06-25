@@ -107,16 +107,21 @@ export const FriendsProvider: React.FC<{ children: React.ReactNode }> = ({ child
   useEffect(() => {
     const loadFriendsData = async () => {
       try {
+        console.log('Loading friends data from storage');
         const friendsData = await AsyncStorage.getItem('fika-friends-data');
         if (friendsData) {
+          console.log('Friends data found in storage');
           const parsedData = JSON.parse(friendsData);
           setFriends(parsedData.friends || mockFriends);
           setFriendRequests(parsedData.friendRequests || mockRequests);
           setGroups(parsedData.groups || mockGroups);
+        } else {
+          console.log('No friends data found, using mock data');
         }
       } catch (error) {
         console.error('Error loading friends data:', error);
       } finally {
+        console.log('Friends loading complete');
         setIsLoading(false);
       }
     };
@@ -128,16 +133,17 @@ export const FriendsProvider: React.FC<{ children: React.ReactNode }> = ({ child
   useEffect(() => {
     const saveFriendsData = async () => {
       try {
-        const friendsData = JSON.stringify({ friends, friendRequests, groups });
-        await AsyncStorage.setItem('fika-friends-data', friendsData);
+        if (!isLoading) {
+          console.log('Saving friends data to storage');
+          const friendsData = JSON.stringify({ friends, friendRequests, groups });
+          await AsyncStorage.setItem('fika-friends-data', friendsData);
+        }
       } catch (error) {
         console.error('Error saving friends data:', error);
       }
     };
 
-    if (!isLoading) {
-      saveFriendsData();
-    }
+    saveFriendsData();
   }, [friends, friendRequests, groups, isLoading]);
 
   const addFriend = (friend: Friend) => {

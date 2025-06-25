@@ -28,7 +28,6 @@ export default function TabLayout() {
           fontWeight: '600',
           color: Colors.text,
         },
-        // Remove the animationEnabled property as it's not supported
       }}
     >
       <Tabs.Screen
