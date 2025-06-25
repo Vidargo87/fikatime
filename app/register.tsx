@@ -9,14 +9,14 @@ import {
   Alert 
 } from 'react-native';
 import { router, Link } from 'expo-router';
+import { Coffee, User, Mail, Lock, UserPlus } from 'lucide-react-native';
 import Colors from '@/constants/colors';
-import { useUser } from '@/contexts/UserContext';
+import { useUserStore } from '@/store/userStore';
 import Button from '@/components/Button';
 import { defaultLanguage } from '@/constants/languages';
-import { CoffeeIcon, UserIcon, MailIcon, LockIcon, UserPlusIcon } from '@/components/icons';
 
 export default function RegisterScreen() {
-  const { setUser } = useUser();
+  const { setUser } = useUserStore();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -73,7 +73,7 @@ export default function RegisterScreen() {
       keyboardShouldPersistTaps="handled"
     >
       <View style={styles.logoContainer}>
-        <CoffeeIcon size={48} color={Colors.primary} />
+        <Coffee size={48} color={Colors.primary} />
         <Text style={styles.logoText}>FikaTime</Text>
       </View>
       
@@ -84,7 +84,7 @@ export default function RegisterScreen() {
       
       <View style={styles.form}>
         <View style={styles.inputContainer}>
-          <UserIcon size={20} color={Colors.textLight} style={styles.inputIcon} />
+          <User size={20} color={Colors.textLight} style={styles.inputIcon} />
           <TextInput
             style={styles.input}
             value={name}
@@ -95,7 +95,7 @@ export default function RegisterScreen() {
         </View>
         
         <View style={styles.inputContainer}>
-          <MailIcon size={20} color={Colors.textLight} style={styles.inputIcon} />
+          <Mail size={20} color={Colors.textLight} style={styles.inputIcon} />
           <TextInput
             style={styles.input}
             value={email}
@@ -108,7 +108,7 @@ export default function RegisterScreen() {
         </View>
         
         <View style={styles.inputContainer}>
-          <LockIcon size={20} color={Colors.textLight} style={styles.inputIcon} />
+          <Lock size={20} color={Colors.textLight} style={styles.inputIcon} />
           <TextInput
             style={styles.input}
             value={password}
@@ -120,7 +120,7 @@ export default function RegisterScreen() {
         </View>
         
         <View style={styles.inputContainer}>
-          <LockIcon size={20} color={Colors.textLight} style={styles.inputIcon} />
+          <Lock size={20} color={Colors.textLight} style={styles.inputIcon} />
           <TextInput
             style={styles.input}
             value={confirmPassword}
@@ -135,7 +135,7 @@ export default function RegisterScreen() {
           title="Create Account"
           onPress={handleRegister}
           loading={loading}
-          icon={<UserPlusIcon size={18} color="#FFFFFF" style={{ marginRight: 8 }} />}
+          icon={<UserPlus size={18} color="#FFFFFF" style={{ marginRight: 8 }} />}
           style={styles.registerButton}
         />
       </View>

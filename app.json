@@ -15,14 +15,14 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "app.sveapp.fikatime"
+      "bundleIdentifier": "app.rork.fikatime"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "app.sveapp.fikatime"
+      "package": "app.rork.fikatime"
     },
     "web": {
       "favicon": "./assets/images/favicon.png"

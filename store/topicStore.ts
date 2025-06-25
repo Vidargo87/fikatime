@@ -21,8 +21,8 @@ const isNewDay = (lastUpdated: string | null): boolean => {
 
 export const useTopicStore = create<TopicState>()(
   persist(
-    (set, get) => ({
-      dailyTopic: getTodayTopic(), // Initialize with a topic right away
+    (set) => ({
+      dailyTopic: getTodayTopic(),
       lastUpdated: new Date().toISOString(),
       refreshTopic: () => {
         const newTopic = resetTodayTopic();
@@ -35,18 +35,11 @@ export const useTopicStore = create<TopicState>()(
     {
       name: 'fika-topic-storage',
       storage: createJSONStorage(() => AsyncStorage),
-      onRehydrateStorage: () => {
-        // Return a function that will be called with the state after rehydration
-        return (state) => {
-          // Check if we need to update the topic
-          if (state && (isNewDay(state.lastUpdated) || !state.dailyTopic)) {
-            // Use the store's setState method instead of 'set'
-            useTopicStore.setState({
-              dailyTopic: getTodayTopic(),
-              lastUpdated: new Date().toISOString()
-            });
-          }
-        };
+      onRehydrateStorage: () => (state) => {
+        // Check if we need to refresh the topic (new day)
+        if (state && isNewDay(state.lastUpdated)) {
+          state.refreshTopic();
+        }
       }
     }
   )

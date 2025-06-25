@@ -5,8 +5,7 @@ import {
   StyleSheet, 
   ActivityIndicator,
   ViewStyle,
-  TextStyle,
-  View
+  TextStyle
 } from 'react-native';
 import Colors from '@/constants/colors';
 
@@ -85,7 +84,7 @@ export default function Button({
       {loading ? (
         <ActivityIndicator color={getTextColor()} size="small" />
       ) : (
-        <View style={styles.content}>
+        <>
           {icon}
           <Text 
             style={[
@@ -93,12 +92,13 @@ export default function Button({
               { color: getTextColor() },
               size === 'small' && { fontSize: 14 },
               size === 'large' && { fontSize: 18 },
+              icon && { marginLeft: 8 },
               textStyle
             ]}
           >
             {title}
           </Text>
-        </View>
+        </>
       )}
     </TouchableOpacity>
   );
@@ -107,14 +107,11 @@ export default function Button({
 const styles = StyleSheet.create({
   button: {
     borderRadius: 12,
+    flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 1,
     borderColor: 'transparent',
-  },
-  content: {
-    flexDirection: 'row',
-    alignItems: 'center',
   },
   text: {
     fontSize: 16,

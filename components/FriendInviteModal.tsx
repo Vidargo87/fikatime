@@ -7,14 +7,13 @@ import {
   FlatList, 
   TouchableOpacity, 
   Alert,
-  TextInput,
-  Platform
+  TextInput
 } from 'react-native';
+import { X, Coffee, Clock, Calendar } from 'lucide-react-native';
 import Colors from '@/constants/colors';
-import { Friend } from '@/types/friends';
+import { Friend } from '@/store/friendsStore';
 import Card from './Card';
 import Button from './Button';
-import { XIcon, CoffeeIcon, ClockIcon, CalendarIcon } from './icons';
 
 interface FriendInviteModalProps {
   friends: Friend[];
@@ -65,128 +64,6 @@ export default function FriendInviteModal({
     setSelectedFriend(null);
   };
 
-  // For Android, we'll render the content directly since the parent component handles the Modal
-  if (Platform.OS === 'android') {
-    return (
-      <Card style={styles.modalContent}>
-        <View style={styles.header}>
-          <CoffeeIcon size={24} color={Colors.primary} />
-          <Text style={styles.title}>
-            {step === 'select' ? 'Invite a Friend to Fika' : 'Schedule Fika'}
-          </Text>
-          <TouchableOpacity onPress={onClose} style={styles.closeButton}>
-            <XIcon size={24} color={Colors.textLight} />
-          </TouchableOpacity>
-        </View>
-        
-        {step === 'select' ? (
-          <>
-            <Text style={styles.subtitle}>
-              Choose a friend to invite for a Fika session
-            </Text>
-            
-            {friends.length === 0 ? (
-              <View style={styles.emptyState}>
-                <Text style={styles.emptyStateText}>
-                  You don't have any friends yet. Add friends to invite them for Fika.
-                </Text>
-                <Button
-                  title="Find Friends"
-                  onPress={() => {
-                    onClose();
-                    // Navigate to friends tab
-                  }}
-                  style={styles.findFriendsButton}
-                />
-              </View>
-            ) : (
-              <FlatList
-                data={friends}
-                keyExtractor={(item) => item.id}
-                renderItem={({ item }) => (
-                  <TouchableOpacity
-                    style={styles.friendItem}
-                    onPress={() => handleSelectFriend(item)}
-                  >
-                    <View style={styles.avatarPlaceholder}>
-                      <Text style={styles.avatarText}>
-                        {item.name.charAt(0).toUpperCase()}
-                      </Text>
-                    </View>
-                    <View style={styles.friendInfo}>
-                      <Text style={styles.friendName}>{item.name}</Text>
-                      {item.showFikaTime && item.preferredFikaTime && (
-                        <View style={styles.fikaTimeContainer}>
-                          <ClockIcon size={12} color={Colors.textLight} style={styles.fikaTimeIcon} />
-                          <Text style={styles.fikaTimeText}>
-                            Prefers Fika at {item.preferredFikaTime}
-                          </Text>
-                        </View>
-                      )}
-                    </View>
-                  </TouchableOpacity>
-                )}
-                style={styles.friendsList}
-              />
-            )}
-          </>
-        ) : (
-          <>
-            <View style={styles.selectedFriendContainer}>
-              <View style={styles.avatarPlaceholder}>
-                <Text style={styles.avatarText}>
-                  {selectedFriend?.name.charAt(0).toUpperCase()}
-                </Text>
-              </View>
-              <Text style={styles.selectedFriendName}>
-                {selectedFriend?.name}
-              </Text>
-            </View>
-            
-            <Text style={styles.inputLabel}>Time</Text>
-            <View style={styles.inputContainer}>
-              <ClockIcon size={20} color={Colors.textLight} style={styles.inputIcon} />
-              <TextInput
-                style={styles.input}
-                value={inviteTime}
-                onChangeText={setInviteTime}
-                placeholder="e.g. 15:30"
-                placeholderTextColor={Colors.textLight}
-              />
-            </View>
-            
-            <Text style={styles.inputLabel}>Date</Text>
-            <View style={styles.inputContainer}>
-              <CalendarIcon size={20} color={Colors.textLight} style={styles.inputIcon} />
-              <TextInput
-                style={styles.input}
-                value={inviteDate}
-                onChangeText={setInviteDate}
-                placeholder="YYYY-MM-DD"
-                placeholderTextColor={Colors.textLight}
-              />
-            </View>
-            
-            <View style={styles.buttonContainer}>
-              <Button
-                title="Back"
-                variant="outline"
-                onPress={handleBack}
-                style={styles.backButton}
-              />
-              <Button
-                title="Send Invite"
-                onPress={handleSendInvite}
-                style={styles.sendButton}
-              />
-            </View>
-          </>
-        )}
-      </Card>
-    );
-  }
-
-  // For iOS and other platforms, use the Modal component
   return (
     <Modal
       visible={true}
@@ -196,12 +73,12 @@ export default function FriendInviteModal({
       <View style={styles.modalOverlay}>
         <Card style={styles.modalContent}>
           <View style={styles.header}>
-            <CoffeeIcon size={24} color={Colors.primary} />
+            <Coffee size={24} color={Colors.primary} />
             <Text style={styles.title}>
               {step === 'select' ? 'Invite a Friend to Fika' : 'Schedule Fika'}
             </Text>
             <TouchableOpacity onPress={onClose} style={styles.closeButton}>
-              <XIcon size={24} color={Colors.textLight} />
+              <X size={24} color={Colors.textLight} />
             </TouchableOpacity>
           </View>
           
@@ -243,7 +120,7 @@ export default function FriendInviteModal({
                         <Text style={styles.friendName}>{item.name}</Text>
                         {item.showFikaTime && item.preferredFikaTime && (
                           <View style={styles.fikaTimeContainer}>
-                            <ClockIcon size={12} color={Colors.textLight} style={styles.fikaTimeIcon} />
+                            <Clock size={12} color={Colors.textLight} style={styles.fikaTimeIcon} />
                             <Text style={styles.fikaTimeText}>
                               Prefers Fika at {item.preferredFikaTime}
                             </Text>
@@ -271,7 +148,7 @@ export default function FriendInviteModal({
               
               <Text style={styles.inputLabel}>Time</Text>
               <View style={styles.inputContainer}>
-                <ClockIcon size={20} color={Colors.textLight} style={styles.inputIcon} />
+                <Clock size={20} color={Colors.textLight} style={styles.inputIcon} />
                 <TextInput
                   style={styles.input}
                   value={inviteTime}
@@ -283,7 +160,7 @@ export default function FriendInviteModal({
               
               <Text style={styles.inputLabel}>Date</Text>
               <View style={styles.inputContainer}>
-                <CalendarIcon size={20} color={Colors.textLight} style={styles.inputIcon} />
+                <Calendar size={20} color={Colors.textLight} style={styles.inputIcon} />
                 <TextInput
                   style={styles.input}
                   value={inviteDate}
@@ -325,7 +202,7 @@ const styles = StyleSheet.create({
   modalContent: {
     width: '100%',
     maxWidth: 500,
-    maxHeight: Platform.OS === 'android' ? '90%' : '80%',
+    maxHeight: '80%',
     padding: 20,
   },
   header: {

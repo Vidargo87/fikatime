@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image, Alert, Platform } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
+import { Camera, Upload, User } from 'lucide-react-native';
 import Colors from '@/constants/colors';
-import { CameraIcon, UploadIcon, UserIcon } from './icons';
 
 interface AvatarPickerProps {
   currentAvatar?: string;
@@ -114,11 +114,11 @@ export default function AvatarPicker({
           style={[styles.avatar, { width: size, height: size, borderRadius: size / 2 }]} 
         />
       ) : (
-        <UserIcon size={size * 0.5} color={Colors.primary} />
+        <User size={size * 0.5} color={Colors.primary} />
       )}
       
       <View style={styles.uploadIcon}>
-        <UploadIcon size={size * 0.25} color={Colors.cardBackground} />
+        <Upload size={size * 0.25} color={Colors.cardBackground} />
       </View>
     </TouchableOpacity>
   );

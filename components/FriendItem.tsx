@@ -1,10 +1,10 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { Coffee, Clock, Globe } from 'lucide-react-native';
 import Colors from '@/constants/colors';
-import { Friend } from '@/types/friends';
+import { Friend } from '@/store/friendsStore';
 import Card from './Card';
 import { languages } from '@/constants/languages';
-import { CoffeeIcon, ClockIcon, GlobeIcon } from './icons';
 
 interface FriendItemProps {
   friend: Friend;
@@ -30,7 +30,7 @@ export default function FriendItem({ friend, onInvite }: FriendItemProps) {
         <Text style={styles.name}>{friend.name}</Text>
         
         <View style={styles.infoRow}>
-          <GlobeIcon size={14} color={Colors.textLight} style={styles.infoIcon} />
+          <Globe size={14} color={Colors.textLight} style={styles.infoIcon} />
           <Text style={styles.infoText}>
             {getLanguageName(friend.language)}
           </Text>
@@ -38,7 +38,7 @@ export default function FriendItem({ friend, onInvite }: FriendItemProps) {
         
         {friend.showFikaTime && friend.preferredFikaTime && (
           <View style={styles.infoRow}>
-            <ClockIcon size={14} color={Colors.textLight} style={styles.infoIcon} />
+            <Clock size={14} color={Colors.textLight} style={styles.infoIcon} />
             <Text style={styles.infoText}>
               Prefers Fika at {friend.preferredFikaTime}
             </Text>
@@ -47,7 +47,7 @@ export default function FriendItem({ friend, onInvite }: FriendItemProps) {
       </View>
       
       <TouchableOpacity style={styles.inviteButton} onPress={onInvite}>
-        <CoffeeIcon size={20} color={Colors.primary} />
+        <Coffee size={20} color={Colors.primary} />
         <Text style={styles.inviteText}>Invite</Text>
       </TouchableOpacity>
     </Card>

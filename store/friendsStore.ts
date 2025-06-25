@@ -229,7 +229,7 @@ export const useFriendsStore = create<FriendsState>()(
           setTimeout(() => {
             resolve(mockSearchResults.filter(user => 
               user.name.toLowerCase().includes(query.toLowerCase()) ||
-              (user.email?.toLowerCase().includes(query.toLowerCase()) || false)
+              user.email?.toLowerCase().includes(query.toLowerCase())
             ));
           }, 1000);
         });

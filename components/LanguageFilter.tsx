@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import { Globe, Check } from 'lucide-react-native';
 import Colors from '@/constants/colors';
 import { languages } from '@/constants/languages';
 import Button from './Button';
 import Card from './Card';
-import { GlobeIcon, CheckIcon } from './icons';
 
 interface LanguageFilterProps {
   selectedLanguages: string[];
@@ -43,7 +43,7 @@ export default function LanguageFilter({
   return (
     <Card style={styles.container}>
       <View style={styles.header}>
-        <GlobeIcon size={24} color={Colors.primary} />
+        <Globe size={24} color={Colors.primary} />
         <Text style={styles.title}>Language Preferences</Text>
       </View>
       
@@ -67,7 +67,7 @@ export default function LanguageFilter({
             </View>
             
             {localSelectedLanguages.includes(lang.code) && (
-              <CheckIcon size={20} color={Colors.primary} />
+              <Check size={20} color={Colors.primary} />
             )}
           </TouchableOpacity>
         ))}

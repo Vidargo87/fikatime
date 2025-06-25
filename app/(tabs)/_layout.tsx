@@ -1,7 +1,7 @@
 import React from "react";
 import { Tabs } from "expo-router";
+import { Home, BookOpen, User, Users } from "lucide-react-native";
 import Colors from "@/constants/colors";
-import { HomeIcon, BookOpenIcon, UserIcon } from "@/components/icons";
 
 export default function TabLayout() {
   return (
@@ -30,21 +30,28 @@ export default function TabLayout() {
         name="index"
         options={{
           title: "Home",
-          tabBarIcon: ({ color }) => <HomeIcon size={22} color={color} />,
+          tabBarIcon: ({ color }) => <Home size={22} color={color} />,
         }}
       />
       <Tabs.Screen
         name="journal"
         options={{
           title: "Journal",
-          tabBarIcon: ({ color }) => <BookOpenIcon size={22} color={color} />,
+          tabBarIcon: ({ color }) => <BookOpen size={22} color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="friends"
+        options={{
+          title: "Friends",
+          tabBarIcon: ({ color }) => <Users size={22} color={color} />,
         }}
       />
       <Tabs.Screen
         name="profile"
         options={{
           title: "Profile",
-          tabBarIcon: ({ color }) => <UserIcon size={22} color={color} />,
+          tabBarIcon: ({ color }) => <User size={22} color={color} />,
         }}
       />
     </Tabs>

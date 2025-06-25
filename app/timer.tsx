@@ -1,18 +1,19 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Platform } from 'react-native';
 import { router } from 'expo-router';
+import { Pause, Play, X, Volume2, VolumeX } from 'lucide-react-native';
 import * as Haptics from 'expo-haptics';
 import { LinearGradient } from 'expo-linear-gradient';
 import Colors from '@/constants/colors';
-import { useSession } from '@/contexts/SessionContext';
-import { useUser } from '@/contexts/UserContext';
+import { useSessionStore } from '@/store/sessionStore';
+import { useUserStore } from '@/store/userStore';
 import ProgressCircle from '@/components/ProgressCircle';
 import Button from '@/components/Button';
-import { PauseIcon, PlayIcon, XIcon, Volume2Icon, VolumeXIcon } from '@/components/icons';
+import VideoChat from '@/components/VideoChat';
 
 export default function TimerScreen() {
-  const { currentSession, clearCurrentSession } = useSession();
-  const { updateStreak } = useUser();
+  const { currentSession, clearCurrentSession } = useSessionStore();
+  const { updateStreak } = useUserStore();
   const [timeRemaining, setTimeRemaining] = useState(
     currentSession ? currentSession.duration * 60 : 600
   ); // in seconds
@@ -70,7 +71,10 @@ export default function TimerScreen() {
   };
 
   const isGroupSession = currentSession?.type === 'duo' || currentSession?.type === 'group';
-  
+  const sessionType = currentSession?.type as 'duo' | 'group';
+  const participantCount = currentSession?.type === 'duo' ? 2 : 
+                          currentSession?.type === 'group' ? 4 : 1;
+
   return (
     <LinearGradient
       colors={[Colors.primary + '40', Colors.background]}
@@ -78,14 +82,14 @@ export default function TimerScreen() {
     >
       <View style={styles.header}>
         <TouchableOpacity onPress={handleCancel} style={styles.closeButton}>
-          <XIcon size={24} color={Colors.text} />
+          <X size={24} color={Colors.text} />
         </TouchableOpacity>
         
         <TouchableOpacity onPress={toggleMute} style={styles.muteButton}>
           {isMuted ? (
-            <VolumeXIcon size={24} color={Colors.text} />
+            <VolumeX size={24} color={Colors.text} />
           ) : (
-            <Volume2Icon size={24} color={Colors.text} />
+            <Volume2 size={24} color={Colors.text} />
           )}
         </TouchableOpacity>
       </View>
@@ -98,34 +102,11 @@ export default function TimerScreen() {
         </Text>
         
         {isGroupSession ? (
-          <View style={styles.groupSessionContainer}>
-            <Text style={styles.groupSessionText}>
-              {currentSession?.type === 'duo' ? 'Duo' : 'Group'} Session
-            </Text>
-            <Text style={styles.groupSessionSubtext}>
-              Waiting for participants to join...
-            </Text>
-            <View style={styles.timerContainer}>
-              <ProgressCircle
-                progress={progress}
-                size={240}
-                strokeWidth={12}
-                text={formatTime(timeRemaining)}
-                textSize={40}
-              />
-              
-              <TouchableOpacity 
-                style={styles.playPauseButton}
-                onPress={toggleTimer}
-              >
-                {isActive ? (
-                  <PauseIcon size={32} color={Colors.primary} />
-                ) : (
-                  <PlayIcon size={32} color={Colors.primary} />
-                )}
-              </TouchableOpacity>
-            </View>
-          </View>
+          <VideoChat 
+            sessionType={sessionType} 
+            participants={participantCount}
+            isGroupSession={currentSession?.participants ? currentSession.participants.length > 0 : false}
+          />
         ) : (
           <View style={styles.timerContainer}>
             <ProgressCircle
@@ -141,9 +122,9 @@ export default function TimerScreen() {
               onPress={toggleTimer}
             >
               {isActive ? (
-                <PauseIcon size={32} color={Colors.primary} />
+                <Pause size={32} color={Colors.primary} />
               ) : (
-                <PlayIcon size={32} color={Colors.primary} />
+                <Play size={32} color={Colors.primary} />
               )}
             </TouchableOpacity>
           </View>
@@ -204,21 +185,6 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: Colors.text,
     marginBottom: 40,
-  },
-  groupSessionContainer: {
-    alignItems: 'center',
-    marginBottom: 60,
-  },
-  groupSessionText: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: Colors.primary,
-    marginBottom: 8,
-  },
-  groupSessionSubtext: {
-    fontSize: 14,
-    color: Colors.textLight,
-    marginBottom: 20,
   },
   timerContainer: {
     alignItems: 'center',

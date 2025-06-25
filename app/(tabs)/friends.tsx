@@ -1,17 +1,17 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, FlatList, TextInput, TouchableOpacity, Alert } from 'react-native';
+import { Search, UserPlus, Clock, X, Check, Coffee, Users as UsersIcon } from 'lucide-react-native';
 import Colors from '@/constants/colors';
-import { useUser } from '@/contexts/UserContext';
-import { useFriends } from '@/contexts/FriendsContext';
+import { useUserStore } from '@/store/userStore';
+import { useFriendsStore } from '@/store/friendsStore';
 import Card from '@/components/Card';
 import Button from '@/components/Button';
 import FriendItem from '@/components/FriendItem';
 import FriendRequestItem from '@/components/FriendRequestItem';
 import CreateGroupModal from '@/components/CreateGroupModal';
-import { SearchIcon, UserPlusIcon, ClockIcon, XIcon, CheckIcon, CoffeeIcon, UsersIcon } from '@/components/icons';
 
 export default function FriendsScreen() {
-  const { user } = useUser();
+  const { user } = useUserStore();
   const { 
     friends, 
     friendRequests, 
@@ -21,7 +21,7 @@ export default function FriendsScreen() {
     acceptFriendRequest,
     declineFriendRequest,
     createFikaGroup
-  } = useFriends();
+  } = useFriendsStore();
   
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<any[]>([]);
@@ -89,13 +89,13 @@ export default function FriendsScreen() {
           variant="secondary"
           size="small"
           onPress={() => setShowCreateGroup(true)}
-          icon={<UserPlusIcon size={16} color={Colors.secondary} style={{ marginRight: 8 }} />}
+          icon={<UserPlus size={16} color={Colors.secondary} style={{ marginRight: 8 }} />}
         />
       </View>
       
       {friends.length === 0 ? (
         <Card style={styles.emptyState}>
-          <UserPlusIcon size={40} color={Colors.textLight} />
+          <UserPlus size={40} color={Colors.textLight} />
           <Text style={styles.emptyStateTitle}>No friends yet</Text>
           <Text style={styles.emptyStateText}>
             Search for users to add them as friends
@@ -123,7 +123,7 @@ export default function FriendsScreen() {
       
       {friendRequests.length === 0 ? (
         <Card style={styles.emptyState}>
-          <ClockIcon size={40} color={Colors.textLight} />
+          <Clock size={40} color={Colors.textLight} />
           <Text style={styles.emptyStateTitle}>No pending requests</Text>
           <Text style={styles.emptyStateText}>
             Friend requests will appear here
@@ -155,7 +155,7 @@ export default function FriendsScreen() {
           variant="secondary"
           size="small"
           onPress={() => setShowCreateGroup(true)}
-          icon={<UserPlusIcon size={16} color={Colors.secondary} style={{ marginRight: 8 }} />}
+          icon={<UserPlus size={16} color={Colors.secondary} style={{ marginRight: 8 }} />}
         />
       </View>
       
@@ -184,7 +184,7 @@ export default function FriendsScreen() {
                   title="Start Group Fika" 
                   variant="primary"
                   size="small"
-                  icon={<CoffeeIcon size={16} color="#FFFFFF" style={{ marginRight: 8 }} />}
+                  icon={<Coffee size={16} color="#FFFFFF" style={{ marginRight: 8 }} />}
                   onPress={() => Alert.alert('Group Fika', `Starting Fika with ${item.name}`)}
                 />
               </View>
@@ -200,7 +200,7 @@ export default function FriendsScreen() {
     <View style={styles.container}>
       <View style={styles.searchContainer}>
         <View style={styles.searchInputContainer}>
-          <SearchIcon size={20} color={Colors.textLight} style={styles.searchIcon} />
+          <Search size={20} color={Colors.textLight} style={styles.searchIcon} />
           <TextInput
             style={styles.searchInput}
             value={searchQuery}
@@ -227,7 +227,7 @@ export default function FriendsScreen() {
               onPress={() => setSearchResults([])}
               style={styles.closeButton}
             >
-              <XIcon size={20} color={Colors.textLight} />
+              <X size={20} color={Colors.textLight} />
             </TouchableOpacity>
           </View>
           
@@ -244,7 +244,7 @@ export default function FriendsScreen() {
                   title="Add Friend"
                   variant="outline"
                   size="small"
-                  icon={<UserPlusIcon size={16} color={Colors.primary} style={{ marginRight: 8 }} />}
+                  icon={<UserPlus size={16} color={Colors.primary} style={{ marginRight: 8 }} />}
                   onPress={() => handleSendRequest(item.id)}
                 />
               </Card>

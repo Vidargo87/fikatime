@@ -1,10 +1,10 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import { Check, X } from 'lucide-react-native';
 import Colors from '@/constants/colors';
-import { FriendRequest } from '@/types/friends';
+import { FriendRequest } from '@/store/friendsStore';
 import Card from './Card';
 import Button from './Button';
-import { CheckIcon, XIcon } from './icons';
 
 interface FriendRequestItemProps {
   request: FriendRequest;
@@ -46,7 +46,7 @@ export default function FriendRequestItem({
           variant="outline"
           size="small"
           style={styles.declineButton}
-          icon={<XIcon size={20} color={Colors.error} />}
+          icon={<X size={20} color={Colors.error} />}
           onPress={onDecline}
         />
         <Button
@@ -54,7 +54,7 @@ export default function FriendRequestItem({
           variant="outline"
           size="small"
           style={styles.acceptButton}
-          icon={<CheckIcon size={20} color={Colors.success} />}
+          icon={<Check size={20} color={Colors.success} />}
           onPress={onAccept}
         />
       </View>

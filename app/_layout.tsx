@@ -7,7 +7,6 @@ import { StatusBar } from "expo-status-bar";
 import Colors from "@/constants/colors";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { trpc, trpcClient } from "@/lib/trpc";
-import { AppProviders } from "@/contexts";
 
 export const unstable_settings = {
   initialRouteName: "(tabs)",
@@ -26,7 +25,8 @@ export default function RootLayout() {
 
   useEffect(() => {
     if (error) {
-      console.error("Font loading error:", error);
+      console.error(error);
+      throw error;
     }
   }, [error]);
 
@@ -47,43 +47,62 @@ function RootLayoutNav() {
   return (
     <>
       <StatusBar style="dark" />
-      <AppProviders>
-        <trpc.Provider client={trpcClient} queryClient={queryClient}>
-          <QueryClientProvider client={queryClient}>
-            <Stack
-              screenOptions={{
-                headerStyle: {
-                  backgroundColor: Colors.background,
-                },
-                headerTintColor: Colors.text,
-                headerTitleStyle: {
-                  fontWeight: '600',
-                },
-                contentStyle: {
-                  backgroundColor: Colors.background,
-                },
-              }}
-            >
-              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-              <Stack.Screen 
-                name="timer" 
-                options={{ 
-                  title: "Fika Time",
-                  headerShown: false,
-                  presentation: "fullScreenModal"
-                }} 
-              />
-              <Stack.Screen 
-                name="reflection" 
-                options={{ 
-                  title: "Fika Reflection",
-                  presentation: "modal"
-                }} 
-              />
-            </Stack>
-          </QueryClientProvider>
-        </trpc.Provider>
-      </AppProviders>
+      <trpc.Provider client={trpcClient} queryClient={queryClient}>
+        <QueryClientProvider client={queryClient}>
+          <Stack
+            screenOptions={{
+              headerStyle: {
+                backgroundColor: Colors.background,
+              },
+              headerTintColor: Colors.text,
+              headerTitleStyle: {
+                fontWeight: '600',
+              },
+              contentStyle: {
+                backgroundColor: Colors.background,
+              },
+            }}
+          >
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            <Stack.Screen 
+              name="timer" 
+              options={{ 
+                title: "Fika Time",
+                headerShown: false,
+                presentation: "fullScreenModal"
+              }} 
+            />
+            <Stack.Screen 
+              name="reflection" 
+              options={{ 
+                title: "Fika Reflection",
+                presentation: "modal"
+              }} 
+            />
+            <Stack.Screen 
+              name="onboarding" 
+              options={{ 
+                headerShown: false,
+                presentation: "modal"
+              }} 
+            />
+            <Stack.Screen 
+              name="login" 
+              options={{ 
+                headerShown: false,
+                presentation: "modal"
+              }} 
+            />
+            <Stack.Screen 
+              name="register" 
+              options={{ 
+                headerShown: false,
+                presentation: "modal"
+              }} 
+            />
+          </Stack>
+        </QueryClientProvider>
+      </trpc.Provider>
     </>
   );
 }

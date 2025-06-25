@@ -3,14 +3,14 @@ import { View, Text, StyleSheet, TextInput, ScrollView, Platform } from 'react-n
 import { router } from 'expo-router';
 import * as Haptics from 'expo-haptics';
 import Colors from '@/constants/colors';
-import { useSession } from '@/contexts/SessionContext';
-import { useTopic } from '@/contexts/TopicContext';
+import { useSessionStore } from '@/store/sessionStore';
+import { useTopicStore } from '@/store/topicStore';
 import MoodSelector from '@/components/MoodSelector';
 import Button from '@/components/Button';
 
 export default function ReflectionScreen() {
-  const { currentSession, endCurrentSession } = useSession();
-  const { refreshTopic } = useTopic();
+  const { currentSession, endCurrentSession } = useSessionStore();
+  const { refreshTopic } = useTopicStore();
   const [reflection, setReflection] = useState('');
   const [mood, setMood] = useState<1 | 2 | 3 | 4 | 5 | undefined>(undefined);
   

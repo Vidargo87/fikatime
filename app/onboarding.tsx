@@ -1,25 +1,30 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TextInput, ScrollView, Platform } from 'react-native';
 import { router } from 'expo-router';
+import { Coffee } from 'lucide-react-native';
 import Colors from '@/constants/colors';
-import { useUser } from '@/contexts/UserContext';
+import { useUserStore } from '@/store/userStore';
 import Button from '@/components/Button';
-import { CoffeeIcon } from '@/components/icons';
 
 export default function OnboardingScreen() {
-  const { user, updateProfile } = useUser();
-  const [name, setName] = useState(user?.name || '');
+  const { setUser } = useUserStore();
+  const [name, setName] = useState('');
   const [step, setStep] = useState(1);
-  const [preferredTime, setPreferredTime] = useState(user?.preferredFikaTime || '');
+  const [preferredTime, setPreferredTime] = useState('');
   
   const handleContinue = () => {
     if (step === 1 && name.trim()) {
       setStep(2);
     } else if (step === 2) {
-      // Update user profile
-      updateProfile({
+      // Create user profile
+      setUser({
+        id: Date.now().toString(),
         name: name.trim(),
+        fikaStreak: 0,
         preferredFikaTime: preferredTime,
+        isPremium: false,
+        totalSessions: 0,
+        joinedDate: new Date().toISOString(),
       });
       
       router.replace('/');
@@ -33,7 +38,7 @@ export default function OnboardingScreen() {
       keyboardShouldPersistTaps="handled"
     >
       <View style={styles.logoContainer}>
-        <CoffeeIcon size={48} color={Colors.primary} />
+        <Coffee size={48} color={Colors.primary} />
         <Text style={styles.logoText}>FikaTime</Text>
       </View>
       

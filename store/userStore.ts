@@ -121,11 +121,7 @@ export const useUserStore = create<UserState>()(
     }),
     {
       name: 'fika-user-storage',
-      storage: createJSONStorage(() => AsyncStorage),
-      partialize: (state) => ({
-        user: state.user,
-        isLoggedIn: state.isLoggedIn
-      })
+      storage: createJSONStorage(() => AsyncStorage)
     }
   )
 );

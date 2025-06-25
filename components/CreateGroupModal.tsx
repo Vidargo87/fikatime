@@ -9,11 +9,11 @@ import {
   FlatList, 
   ScrollView 
 } from 'react-native';
+import { X, Check, Users } from 'lucide-react-native';
 import Colors from '@/constants/colors';
-import { Friend } from '@/types/friends';
+import { Friend } from '@/store/friendsStore';
 import Button from './Button';
 import Card from './Card';
-import { XIcon, CheckIcon, UsersIcon } from './icons';
 
 interface CreateGroupModalProps {
   friends: Friend[];
@@ -50,10 +50,10 @@ export default function CreateGroupModal({
       <View style={styles.modalOverlay}>
         <Card style={styles.modalContent}>
           <View style={styles.header}>
-            <UsersIcon size={24} color={Colors.primary} />
+            <Users size={24} color={Colors.primary} />
             <Text style={styles.title}>Create Fika Group</Text>
             <TouchableOpacity onPress={onClose} style={styles.closeButton}>
-              <XIcon size={24} color={Colors.textLight} />
+              <X size={24} color={Colors.textLight} />
             </TouchableOpacity>
           </View>
           
@@ -93,7 +93,7 @@ export default function CreateGroupModal({
                   </View>
                   
                   {selectedFriends.includes(friend.id) && (
-                    <CheckIcon size={20} color={Colors.primary} />
+                    <Check size={20} color={Colors.primary} />
                   )}
                 </TouchableOpacity>
               ))}

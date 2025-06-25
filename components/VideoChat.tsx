@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Platform } from 'react-native';
+import { Mic, MicOff, Video, VideoOff, Users, Globe } from 'lucide-react-native';
 import Colors from '@/constants/colors';
-import { useUser } from '@/contexts/UserContext';
+import { useUserStore } from '@/store/userStore';
 import { languages } from '@/constants/languages';
-import { MicIcon, MicOffIcon, VideoIcon, VideoOffIcon, UsersIcon, GlobeIcon } from './icons';
 
 interface VideoChatProps {
   sessionType: 'duo' | 'group';
@@ -14,7 +14,7 @@ interface VideoChatProps {
 export default function VideoChat({ sessionType, participants = 2, isGroupSession = false }: VideoChatProps) {
   const [isMicEnabled, setIsMicEnabled] = useState(true);
   const [isVideoEnabled, setIsVideoEnabled] = useState(true);
-  const { user } = useUser();
+  const { user } = useUserStore();
   const [participantLanguages, setParticipantLanguages] = useState<string[]>([]);
   
   // In a real app, this would use Agora or Twilio SDK
@@ -59,7 +59,7 @@ export default function VideoChat({ sessionType, participants = 2, isGroupSessio
     return (
       <View style={styles.container}>
         <View style={styles.webNotice}>
-          <UsersIcon size={40} color={Colors.primary} />
+          <Users size={40} color={Colors.primary} />
           <Text style={styles.webNoticeText}>
             Video chat is available on mobile devices.
           </Text>
@@ -69,7 +69,7 @@ export default function VideoChat({ sessionType, participants = 2, isGroupSessio
           
           {participantLanguages.length > 0 && (
             <View style={styles.languageInfo}>
-              <GlobeIcon size={16} color={Colors.primary} style={styles.languageIcon} />
+              <Globe size={16} color={Colors.primary} style={styles.languageIcon} />
               <Text style={styles.languageText}>
                 Common languages: {participantLanguages.map(getLanguageName).join(', ')}
               </Text>
@@ -91,7 +91,7 @@ export default function VideoChat({ sessionType, participants = 2, isGroupSessio
             </View>
           ) : (
             <View style={styles.videoDisabled}>
-              <UsersIcon size={40} color={Colors.primary} />
+              <Users size={40} color={Colors.primary} />
               <Text style={styles.videoDisabledText}>Camera Off</Text>
             </View>
           )}
@@ -107,7 +107,7 @@ export default function VideoChat({ sessionType, participants = 2, isGroupSessio
             </View>
             {participantLanguages.length > 0 && (
               <View style={styles.participantLanguageBadge}>
-                <GlobeIcon size={12} color="#FFFFFF" />
+                <Globe size={12} color="#FFFFFF" />
                 <Text style={styles.participantLanguageText}>
                   {participantLanguages.map(code => code.toUpperCase()).join(', ')}
                 </Text>
@@ -123,7 +123,7 @@ export default function VideoChat({ sessionType, participants = 2, isGroupSessio
                 </Text>
               </View>
               <View style={styles.participantLanguageBadge}>
-                <GlobeIcon size={12} color="#FFFFFF" />
+                <Globe size={12} color="#FFFFFF" />
                 <Text style={styles.participantLanguageText}>
                   {participantLanguages.slice(0, 2).map(code => code.toUpperCase()).join(', ')}
                 </Text>
@@ -136,7 +136,7 @@ export default function VideoChat({ sessionType, participants = 2, isGroupSessio
                 </Text>
               </View>
               <View style={styles.participantLanguageBadge}>
-                <GlobeIcon size={12} color="#FFFFFF" />
+                <Globe size={12} color="#FFFFFF" />
                 <Text style={styles.participantLanguageText}>
                   {participantLanguages.slice(0, 1).map(code => code.toUpperCase()).join(', ')}
                 </Text>
@@ -150,7 +150,7 @@ export default function VideoChat({ sessionType, participants = 2, isGroupSessio
                   </Text>
                 </View>
                 <View style={styles.participantLanguageBadge}>
-                  <GlobeIcon size={12} color="#FFFFFF" />
+                  <Globe size={12} color="#FFFFFF" />
                   <Text style={styles.participantLanguageText}>
                     {participantLanguages.slice(1, 3).map(code => code.toUpperCase()).join(', ')}
                   </Text>
@@ -162,7 +162,7 @@ export default function VideoChat({ sessionType, participants = 2, isGroupSessio
       </View>
       
       <View style={styles.languageInfoContainer}>
-        <GlobeIcon size={16} color={Colors.primary} />
+        <Globe size={16} color={Colors.primary} />
         <Text style={styles.languageInfoText}>
           Common languages: {participantLanguages.map(getLanguageName).join(', ')}
         </Text>
@@ -174,9 +174,9 @@ export default function VideoChat({ sessionType, participants = 2, isGroupSessio
           onPress={toggleMic}
         >
           {isMicEnabled ? (
-            <MicIcon size={24} color={Colors.text} />
+            <Mic size={24} color={Colors.text} />
           ) : (
-            <MicOffIcon size={24} color={Colors.cardBackground} />
+            <MicOff size={24} color={Colors.cardBackground} />
           )}
         </TouchableOpacity>
         
@@ -185,9 +185,9 @@ export default function VideoChat({ sessionType, participants = 2, isGroupSessio
           onPress={toggleVideo}
         >
           {isVideoEnabled ? (
-            <VideoIcon size={24} color={Colors.text} />
+            <Video size={24} color={Colors.text} />
           ) : (
-            <VideoOffIcon size={24} color={Colors.cardBackground} />
+            <VideoOff size={24} color={Colors.cardBackground} />
           )}
         </TouchableOpacity>
       </View>
