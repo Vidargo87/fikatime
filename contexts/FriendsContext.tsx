@@ -215,10 +215,10 @@ export const FriendsProvider: React.FC<{ children: React.ReactNode }> = ({ child
     );
   };
 
-  const searchUsers = async (query: string) => {
+  const searchUsers = async (query: string): Promise<any[]> => {
     // In a real app, this would call a Firebase function
     // For demo purposes, return mock results after a delay
-    return new Promise((resolve) => {
+    return new Promise<any[]>((resolve) => {
       setTimeout(() => {
         resolve(mockSearchResults.filter(user => 
           user.name.toLowerCase().includes(query.toLowerCase()) ||
