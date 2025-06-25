@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Platform } from 'react-native';
 import Colors from '@/constants/colors';
-import { useUserStore } from '@/store/userStore';
+import { useUser } from '@/contexts/UserContext';
 import { languages } from '@/constants/languages';
 import { MicIcon, MicOffIcon, VideoIcon, VideoOffIcon, UsersIcon, GlobeIcon } from './icons';
 
@@ -14,7 +14,7 @@ interface VideoChatProps {
 export default function VideoChat({ sessionType, participants = 2, isGroupSession = false }: VideoChatProps) {
   const [isMicEnabled, setIsMicEnabled] = useState(true);
   const [isVideoEnabled, setIsVideoEnabled] = useState(true);
-  const { user } = useUserStore();
+  const { user } = useUser();
   const [participantLanguages, setParticipantLanguages] = useState<string[]>([]);
   
   // In a real app, this would use Agora or Twilio SDK
