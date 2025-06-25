@@ -3,19 +3,11 @@ import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
-import { LogBox } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import Colors from "@/constants/colors";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { trpc, trpcClient } from "@/lib/trpc";
 import { AppProviders } from "@/contexts";
-
-// Ignore specific warnings that might be causing issues
-LogBox.ignoreLogs([
-  'Non-serializable values were found in the navigation state',
-  'Sending `onAnimatedValueUpdate` with no listeners registered',
-  'Text strings must be rendered within a <Text> component'
-]);
 
 export const unstable_settings = {
   initialRouteName: "(tabs)",
@@ -40,16 +32,7 @@ export default function RootLayout() {
 
   useEffect(() => {
     if (loaded) {
-      // Add a small delay to ensure smooth transition
-      const hideSplash = async () => {
-        try {
-          await SplashScreen.hideAsync();
-        } catch (e) {
-          console.warn("Error hiding splash screen:", e);
-        }
-      };
-      
-      hideSplash();
+      SplashScreen.hideAsync();
     }
   }, [loaded]);
 
@@ -94,27 +77,6 @@ function RootLayoutNav() {
                 name="reflection" 
                 options={{ 
                   title: "Fika Reflection",
-                  presentation: "modal"
-                }} 
-              />
-              <Stack.Screen 
-                name="onboarding" 
-                options={{ 
-                  headerShown: false,
-                  presentation: "modal"
-                }} 
-              />
-              <Stack.Screen 
-                name="login" 
-                options={{ 
-                  headerShown: false,
-                  presentation: "modal"
-                }} 
-              />
-              <Stack.Screen 
-                name="register" 
-                options={{ 
-                  headerShown: false,
                   presentation: "modal"
                 }} 
               />

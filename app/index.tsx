@@ -1,56 +1,30 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { View, StyleSheet, ActivityIndicator, Text } from 'react-native';
 import { router } from 'expo-router';
 import { useUser } from '@/contexts/UserContext';
-import { useTopic } from '@/contexts/TopicContext';
 import Colors from '@/constants/colors';
 import { CoffeeIcon } from '@/components/icons';
 
 export default function IndexScreen() {
-  const { isLoggedIn, user, isLoading: userLoading } = useUser();
-  const { dailyTopic, isLoading: topicLoading } = useTopic();
-  const [hasNavigated, setHasNavigated] = useState(false);
+  const { isLoggedIn, isLoading } = useUser();
 
   useEffect(() => {
-    // Wait for contexts to be ready
-    if (userLoading || topicLoading) {
-      return;
-    }
-
-    // Prevent multiple navigation attempts
-    if (hasNavigated) {
-      return;
-    }
-
-    console.log('Navigation logic - isLoggedIn:', isLoggedIn, 'user:', !!user);
-
-    // Navigate based on login state
-    const navigate = () => {
-      setHasNavigated(true);
-      
-      if (isLoggedIn && user) {
-        console.log('Navigating to tabs');
+    if (!isLoading) {
+      // Small delay to ensure smooth transition
+      const timer = setTimeout(() => {
         router.replace('/(tabs)');
-      } else {
-        console.log('Navigating to login');
-        router.replace('/login');
-      }
-    };
-
-    // Small delay to ensure smooth transition
-    const timer = setTimeout(navigate, 500);
-    
-    return () => clearTimeout(timer);
-  }, [isLoggedIn, user, userLoading, topicLoading, hasNavigated]);
+      }, 1000);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [isLoading]);
 
   return (
     <View style={styles.container}>
       <CoffeeIcon size={64} color={Colors.primary} />
       <Text style={styles.appName}>FikaTime</Text>
       <ActivityIndicator size="large" color={Colors.primary} style={styles.loader} />
-      <Text style={styles.loadingText}>
-        {userLoading || topicLoading ? 'Loading your Fika...' : 'Starting FikaTime...'}
-      </Text>
+      <Text style={styles.loadingText}>Loading your Fika...</Text>
     </View>
   );
 }

@@ -1,8 +1,7 @@
 import React from "react";
 import { Tabs } from "expo-router";
-import { Platform } from "react-native";
 import Colors from "@/constants/colors";
-import { HomeIcon, BookOpenIcon, UserIcon, UsersIcon } from "@/components/icons";
+import { HomeIcon, BookOpenIcon, UserIcon } from "@/components/icons";
 
 export default function TabLayout() {
   return (
@@ -13,9 +12,6 @@ export default function TabLayout() {
         tabBarStyle: {
           backgroundColor: Colors.cardBackground,
           borderTopColor: Colors.border,
-          // Fix for Android elevation issues
-          elevation: Platform.OS === 'android' ? 0 : undefined,
-          shadowOpacity: Platform.OS === 'android' ? 0 : undefined,
         },
         tabBarLabelStyle: {
           fontSize: 12,
@@ -42,13 +38,6 @@ export default function TabLayout() {
         options={{
           title: "Journal",
           tabBarIcon: ({ color }) => <BookOpenIcon size={22} color={color} />,
-        }}
-      />
-      <Tabs.Screen
-        name="friends"
-        options={{
-          title: "Friends",
-          tabBarIcon: ({ color }) => <UsersIcon size={22} color={color} />,
         }}
       />
       <Tabs.Screen

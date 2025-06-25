@@ -1,21 +1,15 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, FlatList } from 'react-native';
 import Colors from '@/constants/colors';
 import { useSession } from '@/contexts/SessionContext';
 import { useUser } from '@/contexts/UserContext';
 import SessionHistoryItem from '@/components/SessionHistoryItem';
 import Card from '@/components/Card';
-import { CalendarIcon, FilterIcon } from '@/components/icons';
+import { CalendarIcon } from '@/components/icons';
 
 export default function JournalScreen() {
   const { sessions } = useSession();
   const { user } = useUser();
-  const [filter, setFilter] = useState<'all' | 'solo' | 'duo' | 'group'>('all');
-
-  const filteredSessions = sessions.filter(session => {
-    if (filter === 'all') return true;
-    return session.type === filter;
-  });
 
   const renderEmptyState = () => (
     <Card style={styles.emptyStateCard}>
@@ -50,43 +44,8 @@ export default function JournalScreen() {
         </View>
       </View>
 
-      <View style={styles.filterContainer}>
-        <TouchableOpacity
-          style={[styles.filterButton, filter === 'all' && styles.activeFilter]}
-          onPress={() => setFilter('all')}
-        >
-          <Text style={[styles.filterText, filter === 'all' && styles.activeFilterText]}>
-            All
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.filterButton, filter === 'solo' && styles.activeFilter]}
-          onPress={() => setFilter('solo')}
-        >
-          <Text style={[styles.filterText, filter === 'solo' && styles.activeFilterText]}>
-            Solo
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.filterButton, filter === 'duo' && styles.activeFilter]}
-          onPress={() => setFilter('duo')}
-        >
-          <Text style={[styles.filterText, filter === 'duo' && styles.activeFilterText]}>
-            Duo
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.filterButton, filter === 'group' && styles.activeFilter]}
-          onPress={() => setFilter('group')}
-        >
-          <Text style={[styles.filterText, filter === 'group' && styles.activeFilterText]}>
-            Group
-          </Text>
-        </TouchableOpacity>
-      </View>
-
       <FlatList
-        data={filteredSessions}
+        data={sessions}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => <SessionHistoryItem session={item} />}
         contentContainerStyle={styles.listContent}
@@ -131,29 +90,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: Colors.textLight,
     marginTop: 4,
-  },
-  filterContainer: {
-    flexDirection: 'row',
-    paddingHorizontal: 16,
-    marginBottom: 8,
-  },
-  filterButton: {
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    borderRadius: 20,
-    marginRight: 8,
-    backgroundColor: Colors.cardBackground,
-  },
-  activeFilter: {
-    backgroundColor: Colors.primary,
-  },
-  filterText: {
-    fontSize: 14,
-    color: Colors.textLight,
-  },
-  activeFilterText: {
-    color: '#FFFFFF',
-    fontWeight: '500',
   },
   listContent: {
     padding: 16,

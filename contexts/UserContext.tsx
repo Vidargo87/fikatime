@@ -1,7 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { UserProfile } from '@/types';
-import { defaultLanguage } from '@/constants/languages';
 
 interface UserContextType {
   user: UserProfile | null;
@@ -10,16 +9,27 @@ interface UserContextType {
   setUser: (user: UserProfile) => void;
   updateStreak: () => void;
   updateProfile: (updates: Partial<UserProfile>) => void;
-  updateAvatar: (avatarUri: string) => void;
-  updateLanguage: (languageCode: string) => void;
-  updatePreferredConnectionLanguages: (languageCodes: string[]) => void;
-  toggleConnectionLanguage: (languageCode: string) => void;
-  addFriend: (friendId: string) => void;
-  removeFriend: (friendId: string) => void;
   logout: () => void;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
+
+// Create a default user for demo purposes
+const createDefaultUser = (): UserProfile => ({
+  id: 'demo-user',
+  name: 'Demo User',
+  email: 'demo@fikatime.com',
+  fikaStreak: 3,
+  lastFikaDate: new Date().toISOString().split('T')[0],
+  preferredFikaTime: '10:30',
+  isPremium: false,
+  totalSessions: 5,
+  joinedDate: new Date().toISOString(),
+  language: 'en',
+  preferredConnectionLanguages: ['en'],
+  allowFikaTimeVisible: true,
+  friends: []
+});
 
 export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUserState] = useState<UserProfile | null>(null);
@@ -30,20 +40,24 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     const loadUserData = async () => {
       try {
-        console.log('UserContext: Loading user data from storage');
         const userData = await AsyncStorage.getItem('fika-user-data');
         if (userData) {
-          console.log('UserContext: User data found in storage');
           const parsedData = JSON.parse(userData);
           setUserState(parsedData.user);
           setIsLoggedIn(parsedData.isLoggedIn);
         } else {
-          console.log('UserContext: No user data found in storage');
+          // Create default user for demo
+          const defaultUser = createDefaultUser();
+          setUserState(defaultUser);
+          setIsLoggedIn(true);
         }
       } catch (error) {
-        console.error('UserContext: Error loading user data:', error);
+        console.error('Error loading user data:', error);
+        // Fallback to default user
+        const defaultUser = createDefaultUser();
+        setUserState(defaultUser);
+        setIsLoggedIn(true);
       } finally {
-        console.log('UserContext: User loading complete');
         setIsLoading(false);
       }
     };
@@ -56,12 +70,11 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const saveUserData = async () => {
       try {
         if (!isLoading) {
-          console.log('UserContext: Saving user data to storage');
           const userData = JSON.stringify({ user, isLoggedIn });
           await AsyncStorage.setItem('fika-user-data', userData);
         }
       } catch (error) {
-        console.error('UserContext: Error saving user data:', error);
+        console.error('Error saving user data:', error);
       }
     };
 
@@ -69,14 +82,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, [user, isLoggedIn, isLoading]);
 
   const setUser = (newUser: UserProfile) => {
-    console.log('UserContext: Setting user:', newUser.name);
-    setUserState({
-      ...newUser,
-      language: newUser.language || defaultLanguage,
-      preferredConnectionLanguages: newUser.preferredConnectionLanguages || [newUser.language || defaultLanguage],
-      allowFikaTimeVisible: newUser.allowFikaTimeVisible !== undefined ? newUser.allowFikaTimeVisible : true,
-      friends: newUser.friends || []
-    });
+    setUserState(newUser);
     setIsLoggedIn(true);
   };
 
@@ -97,68 +103,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const updateAvatar = (avatarUri: string) => {
-    if (user) {
-      setUserState({ ...user, avatar: avatarUri });
-    }
-  };
-
-  const updateLanguage = (languageCode: string) => {
-    if (user) {
-      setUserState({ ...user, language: languageCode });
-    }
-  };
-
-  const updatePreferredConnectionLanguages = (languageCodes: string[]) => {
-    if (user) {
-      setUserState({ ...user, preferredConnectionLanguages: languageCodes });
-    }
-  };
-
-  const toggleConnectionLanguage = (languageCode: string) => {
-    if (user) {
-      const currentLanguages = user.preferredConnectionLanguages || [];
-      let newLanguages;
-      
-      if (currentLanguages.includes(languageCode)) {
-        // Remove language if it's already selected
-        newLanguages = currentLanguages.filter(code => code !== languageCode);
-        // Ensure at least one language is selected
-        if (newLanguages.length === 0) {
-          newLanguages = [user.language || defaultLanguage];
-        }
-      } else {
-        // Add language if it's not selected
-        newLanguages = [...currentLanguages, languageCode];
-      }
-      
-      setUserState({ ...user, preferredConnectionLanguages: newLanguages });
-    }
-  };
-
-  const addFriend = (friendId: string) => {
-    if (user) {
-      const currentFriends = user.friends || [];
-      if (!currentFriends.includes(friendId)) {
-        setUserState({ 
-          ...user, 
-          friends: [...currentFriends, friendId] 
-        });
-      }
-    }
-  };
-
-  const removeFriend = (friendId: string) => {
-    if (user && user.friends) {
-      setUserState({ 
-        ...user, 
-        friends: user.friends.filter(id => id !== friendId) 
-      });
-    }
-  };
-
   const logout = () => {
-    console.log('UserContext: Logging out user');
     setUserState(null);
     setIsLoggedIn(false);
   };
@@ -172,12 +117,6 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setUser,
         updateStreak,
         updateProfile,
-        updateAvatar,
-        updateLanguage,
-        updatePreferredConnectionLanguages,
-        toggleConnectionLanguage,
-        addFriend,
-        removeFriend,
         logout
       }}
     >
