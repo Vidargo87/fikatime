@@ -30,38 +30,38 @@ export const TopicProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   useEffect(() => {
     const loadTopicData = async () => {
       try {
-        console.log('Loading topic data from storage');
+        console.log('TopicContext: Loading topic data from storage');
         const topicData = await AsyncStorage.getItem('fika-topic-data');
         
         if (topicData) {
-          console.log('Topic data found in storage');
+          console.log('TopicContext: Topic data found in storage');
           const parsedData = JSON.parse(topicData);
           
           // Check if we need to update the topic for a new day
           if (isNewDay(parsedData.lastUpdated) || !parsedData.dailyTopic) {
-            console.log('Getting new topic for today');
+            console.log('TopicContext: Getting new topic for today');
             const newTopic = getTodayTopic();
             setDailyTopic(newTopic);
             setLastUpdated(new Date().toISOString());
           } else {
-            console.log('Using existing topic');
+            console.log('TopicContext: Using existing topic');
             setDailyTopic(parsedData.dailyTopic);
             setLastUpdated(parsedData.lastUpdated);
           }
         } else {
-          console.log('No topic data found, creating new');
+          console.log('TopicContext: No topic data found, creating new');
           const newTopic = getTodayTopic();
           setDailyTopic(newTopic);
           setLastUpdated(new Date().toISOString());
         }
       } catch (error) {
-        console.error('Error loading topic data:', error);
+        console.error('TopicContext: Error loading topic data:', error);
         // Fallback to getting a new topic
         const newTopic = getTodayTopic();
         setDailyTopic(newTopic);
         setLastUpdated(new Date().toISOString());
       } finally {
-        console.log('Topic loading complete');
+        console.log('TopicContext: Topic loading complete');
         setIsLoading(false);
       }
     };
@@ -74,12 +74,12 @@ export const TopicProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     const saveTopicData = async () => {
       try {
         if (!isLoading && dailyTopic) {
-          console.log('Saving topic data to storage');
+          console.log('TopicContext: Saving topic data to storage');
           const topicData = JSON.stringify({ dailyTopic, lastUpdated });
           await AsyncStorage.setItem('fika-topic-data', topicData);
         }
       } catch (error) {
-        console.error('Error saving topic data:', error);
+        console.error('TopicContext: Error saving topic data:', error);
       }
     };
 
@@ -87,7 +87,7 @@ export const TopicProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   }, [dailyTopic, lastUpdated, isLoading]);
 
   const refreshTopic = () => {
-    console.log('Refreshing topic');
+    console.log('TopicContext: Refreshing topic');
     const newTopic = resetTodayTopic();
     setDailyTopic(newTopic);
     setLastUpdated(new Date().toISOString());

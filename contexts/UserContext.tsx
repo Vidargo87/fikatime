@@ -30,20 +30,20 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     const loadUserData = async () => {
       try {
-        console.log('Loading user data from storage');
+        console.log('UserContext: Loading user data from storage');
         const userData = await AsyncStorage.getItem('fika-user-data');
         if (userData) {
-          console.log('User data found in storage');
+          console.log('UserContext: User data found in storage');
           const parsedData = JSON.parse(userData);
           setUserState(parsedData.user);
           setIsLoggedIn(parsedData.isLoggedIn);
         } else {
-          console.log('No user data found in storage');
+          console.log('UserContext: No user data found in storage');
         }
       } catch (error) {
-        console.error('Error loading user data:', error);
+        console.error('UserContext: Error loading user data:', error);
       } finally {
-        console.log('User loading complete');
+        console.log('UserContext: User loading complete');
         setIsLoading(false);
       }
     };
@@ -56,12 +56,12 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const saveUserData = async () => {
       try {
         if (!isLoading) {
-          console.log('Saving user data to storage');
+          console.log('UserContext: Saving user data to storage');
           const userData = JSON.stringify({ user, isLoggedIn });
           await AsyncStorage.setItem('fika-user-data', userData);
         }
       } catch (error) {
-        console.error('Error saving user data:', error);
+        console.error('UserContext: Error saving user data:', error);
       }
     };
 
@@ -69,7 +69,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, [user, isLoggedIn, isLoading]);
 
   const setUser = (newUser: UserProfile) => {
-    console.log('Setting user:', newUser.name);
+    console.log('UserContext: Setting user:', newUser.name);
     setUserState({
       ...newUser,
       language: newUser.language || defaultLanguage,
@@ -158,7 +158,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const logout = () => {
-    console.log('Logging out user');
+    console.log('UserContext: Logging out user');
     setUserState(null);
     setIsLoggedIn(false);
   };

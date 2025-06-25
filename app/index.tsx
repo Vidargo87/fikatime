@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { View, StyleSheet, ActivityIndicator, Text, Platform } from 'react-native';
+import { View, StyleSheet, ActivityIndicator, Text } from 'react-native';
 import { router } from 'expo-router';
 import { useUser } from '@/contexts/UserContext';
 import { useTopic } from '@/contexts/TopicContext';
@@ -8,77 +8,40 @@ import { CoffeeIcon } from '@/components/icons';
 
 export default function IndexScreen() {
   const { isLoggedIn, user, isLoading: userLoading } = useUser();
-  const { dailyTopic, refreshTopic, isLoading: topicLoading } = useTopic();
-  const [isLoading, setIsLoading] = useState(true);
-  const [navigationAttempted, setNavigationAttempted] = useState(false);
+  const { dailyTopic, isLoading: topicLoading } = useTopic();
+  const [hasNavigated, setHasNavigated] = useState(false);
 
   useEffect(() => {
-    // Initialize the app
-    const initializeApp = async () => {
-      try {
-        console.log('Initializing app...');
-        
-        // Make sure we have a topic
-        if (!dailyTopic) {
-          console.log('Refreshing topic...');
-          refreshTopic();
-        }
-        
-        // Wait for contexts to be ready
-        let attempts = 0;
-        const maxAttempts = 20; // 2 seconds max
-        
-        while ((userLoading || topicLoading) && attempts < maxAttempts) {
-          await new Promise(resolve => setTimeout(resolve, 100));
-          attempts++;
-        }
-        
-        console.log('Contexts ready, navigating...');
-        
-        // Navigate based on login state
-        if (isLoggedIn && user) {
-          console.log('User is logged in, navigating to tabs');
-          setNavigationAttempted(true);
-          router.replace('/(tabs)');
-        } else {
-          console.log('User not logged in, navigating to login');
-          setNavigationAttempted(true);
-          router.replace('/login');
-        }
-      } catch (error) {
-        console.error('Error initializing app:', error);
-        // Ensure we navigate away from splash screen even if there's an error
-        setNavigationAttempted(true);
+    // Wait for contexts to be ready
+    if (userLoading || topicLoading) {
+      return;
+    }
+
+    // Prevent multiple navigation attempts
+    if (hasNavigated) {
+      return;
+    }
+
+    console.log('Navigation logic - isLoggedIn:', isLoggedIn, 'user:', !!user);
+
+    // Navigate based on login state
+    const navigate = () => {
+      setHasNavigated(true);
+      
+      if (isLoggedIn && user) {
+        console.log('Navigating to tabs');
+        router.replace('/(tabs)');
+      } else {
+        console.log('Navigating to login');
         router.replace('/login');
-      } finally {
-        setIsLoading(false);
       }
     };
 
-    // Start initialization after a short delay to ensure contexts are mounted
-    const timer = setTimeout(() => {
-      initializeApp();
-    }, 300);
-
+    // Small delay to ensure smooth transition
+    const timer = setTimeout(navigate, 500);
+    
     return () => clearTimeout(timer);
-  }, [isLoggedIn, user, dailyTopic, userLoading, topicLoading]);
-
-  // Safety mechanism: if we're still on this screen after 4 seconds, force navigation
-  useEffect(() => {
-    const safetyTimer = setTimeout(() => {
-      if (!navigationAttempted) {
-        console.log('Safety timer triggered - forcing navigation');
-        setNavigationAttempted(true);
-        if (isLoggedIn && user) {
-          router.replace('/(tabs)');
-        } else {
-          router.replace('/login');
-        }
-      }
-    }, 4000);
-
-    return () => clearTimeout(safetyTimer);
-  }, [navigationAttempted, isLoggedIn, user]);
+  }, [isLoggedIn, user, userLoading, topicLoading, hasNavigated]);
 
   return (
     <View style={styles.container}>
