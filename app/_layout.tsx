@@ -3,7 +3,8 @@ import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
-import { StatusBar, LogBox } from "react-native";
+import { LogBox } from "react-native";
+import { StatusBar } from "expo-status-bar"; // Changed from react-native to expo-status-bar
 import Colors from "@/constants/colors";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { trpc, trpcClient } from "@/lib/trpc";
@@ -61,7 +62,7 @@ export default function RootLayout() {
 function RootLayoutNav() {
   return (
     <>
-      <StatusBar barStyle="dark" />
+      <StatusBar style="dark" /> {/* Changed from barStyle to style for expo-status-bar */}
       <AppProviders>
         <trpc.Provider client={trpcClient} queryClient={queryClient}>
           <QueryClientProvider client={queryClient}>
