@@ -11,13 +11,13 @@ import {
 } from 'react-native';
 import { router, Link } from 'expo-router';
 import Colors from '@/constants/colors';
-import { useUserStore } from '@/store/userStore';
+import { useUser } from '@/contexts/UserContext';
 import Button from '@/components/Button';
 import { defaultLanguage } from '@/constants/languages';
 import { CoffeeIcon, MailIcon, LockIcon, LogInIcon } from '@/components/icons';
 
 export default function LoginScreen() {
-  const { setUser } = useUserStore();
+  const { setUser } = useUser();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);

@@ -2,10 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, Modal } from 'react-native';
 import { router } from 'expo-router';
 import Colors from '@/constants/colors';
-import { useUserStore } from '@/store/userStore';
-import { useSessionStore } from '@/store/sessionStore';
-import { useTopicStore } from '@/store/topicStore';
-import { useFriendsStore } from '@/store/friendsStore';
+import { useUser } from '@/contexts/UserContext';
+import { useSession } from '@/contexts/SessionContext';
+import { useTopic } from '@/contexts/TopicContext';
+import { useFriends } from '@/contexts/FriendsContext';
 import FikaCard from '@/components/FikaCard';
 import Card from '@/components/Card';
 import Button from '@/components/Button';
@@ -14,10 +14,10 @@ import FriendInviteModal from '@/components/FriendInviteModal';
 import { CoffeeIcon, UserPlusIcon } from '@/components/icons';
 
 export default function HomeScreen() {
-  const { user, updateProfile } = useUserStore();
-  const { startSession } = useSessionStore();
-  const { dailyTopic } = useTopicStore();
-  const { friends } = useFriendsStore();
+  const { user, updateProfile } = useUser();
+  const { startSession } = useSession();
+  const { dailyTopic } = useTopic();
+  const { friends } = useFriends();
   
   const [showLanguageModal, setShowLanguageModal] = useState(false);
   const [showFriendInviteModal, setShowFriendInviteModal] = useState(false);

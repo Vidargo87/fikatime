@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, FlatList, TextInput, TouchableOpacity, Alert } from 'react-native';
 import Colors from '@/constants/colors';
-import { useUserStore } from '@/store/userStore';
-import { useFriendsStore } from '@/store/friendsStore';
+import { useUser } from '@/contexts/UserContext';
+import { useFriends } from '@/contexts/FriendsContext';
 import Card from '@/components/Card';
 import Button from '@/components/Button';
 import FriendItem from '@/components/FriendItem';
@@ -11,7 +11,7 @@ import CreateGroupModal from '@/components/CreateGroupModal';
 import { SearchIcon, UserPlusIcon, ClockIcon, XIcon, CheckIcon, CoffeeIcon, UsersIcon } from '@/components/icons';
 
 export default function FriendsScreen() {
-  const { user } = useUserStore();
+  const { user } = useUser();
   const { 
     friends, 
     friendRequests, 
@@ -21,7 +21,7 @@ export default function FriendsScreen() {
     acceptFriendRequest,
     declineFriendRequest,
     createFikaGroup
-  } = useFriendsStore();
+  } = useFriends();
   
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<any[]>([]);

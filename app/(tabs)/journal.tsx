@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 import Colors from '@/constants/colors';
-import { useSessionStore } from '@/store/sessionStore';
-import { useUserStore } from '@/store/userStore';
+import { useSession } from '@/contexts/SessionContext';
+import { useUser } from '@/contexts/UserContext';
 import SessionHistoryItem from '@/components/SessionHistoryItem';
 import Card from '@/components/Card';
 import { CalendarIcon, FilterIcon } from '@/components/icons';
 
 export default function JournalScreen() {
-  const { sessions } = useSessionStore();
-  const { user } = useUserStore();
+  const { sessions } = useSession();
+  const { user } = useUser();
   const [filter, setFilter] = useState<'all' | 'solo' | 'duo' | 'group'>('all');
 
   const filteredSessions = sessions.filter(session => {

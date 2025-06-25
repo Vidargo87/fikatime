@@ -4,16 +4,16 @@ import { router } from 'expo-router';
 import * as Haptics from 'expo-haptics';
 import { LinearGradient } from 'expo-linear-gradient';
 import Colors from '@/constants/colors';
-import { useSessionStore } from '@/store/sessionStore';
-import { useUserStore } from '@/store/userStore';
+import { useSession } from '@/contexts/SessionContext';
+import { useUser } from '@/contexts/UserContext';
 import ProgressCircle from '@/components/ProgressCircle';
 import Button from '@/components/Button';
 import VideoChat from '@/components/VideoChat';
 import { PauseIcon, PlayIcon, XIcon, Volume2Icon, VolumeXIcon } from '@/components/icons';
 
 export default function TimerScreen() {
-  const { currentSession, clearCurrentSession } = useSessionStore();
-  const { updateStreak } = useUserStore();
+  const { currentSession, clearCurrentSession } = useSession();
+  const { updateStreak } = useUser();
   const [timeRemaining, setTimeRemaining] = useState(
     currentSession ? currentSession.duration * 60 : 600
   ); // in seconds

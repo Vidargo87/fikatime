@@ -10,13 +10,13 @@ import {
 } from 'react-native';
 import { router, Link } from 'expo-router';
 import Colors from '@/constants/colors';
-import { useUserStore } from '@/store/userStore';
+import { useUser } from '@/contexts/UserContext';
 import Button from '@/components/Button';
 import { defaultLanguage } from '@/constants/languages';
 import { CoffeeIcon, UserIcon, MailIcon, LockIcon, UserPlusIcon } from '@/components/icons';
 
 export default function RegisterScreen() {
-  const { setUser } = useUserStore();
+  const { setUser } = useUser();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');

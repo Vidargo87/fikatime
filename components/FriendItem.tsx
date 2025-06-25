@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import Colors from '@/constants/colors';
-import { Friend } from '@/store/friendsStore';
+import { Friend } from '@/types/friends';
 import Card from './Card';
 import { languages } from '@/constants/languages';
 import { CoffeeIcon, ClockIcon, GlobeIcon } from './icons';

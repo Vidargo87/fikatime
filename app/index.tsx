@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react';
 import { View, StyleSheet, ActivityIndicator, Text } from 'react-native';
 import { router } from 'expo-router';
-import { useUserStore } from '@/store/userStore';
-import { useTopicStore } from '@/store/topicStore';
+import { useUser } from '@/contexts/UserContext';
+import { useTopic } from '@/contexts/TopicContext';
 import Colors from '@/constants/colors';
 
 export default function IndexScreen() {
-  const { isLoggedIn, user } = useUserStore();
-  const { dailyTopic, refreshTopic } = useTopicStore();
+  const { isLoggedIn, user, isLoading: userLoading } = useUser();
+  const { dailyTopic, refreshTopic, isLoading: topicLoading } = useTopic();
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -19,14 +19,16 @@ export default function IndexScreen() {
           refreshTopic();
         }
         
-        // Short delay to allow stores to hydrate
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        // Short delay to allow contexts to initialize
+        await new Promise(resolve => setTimeout(resolve, 500));
         
         // Navigate based on login state
-        if (isLoggedIn && user) {
-          router.replace('/(tabs)');
-        } else {
-          router.replace('/login');
+        if (!userLoading && !topicLoading) {
+          if (isLoggedIn && user) {
+            router.replace('/(tabs)');
+          } else {
+            router.replace('/login');
+          }
         }
       } catch (error) {
         console.error('Error initializing app:', error);
@@ -37,15 +39,15 @@ export default function IndexScreen() {
       }
     };
 
-    // Small delay before initialization to ensure stores are ready
+    // Small delay before initialization to ensure contexts are ready
     const timer = setTimeout(() => {
       initializeApp();
     }, 500);
 
     return () => clearTimeout(timer);
-  }, [isLoggedIn, user, dailyTopic]);
+  }, [isLoggedIn, user, dailyTopic, userLoading, topicLoading]);
 
-  if (isLoading) {
+  if (isLoading || userLoading || topicLoading) {
     return (
       <View style={styles.container}>
         <ActivityIndicator size="large" color={Colors.primary} />

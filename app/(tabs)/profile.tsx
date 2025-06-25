@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TextInput, Switch, Alert, Platform, TouchableOpacity } from 'react-native';
 import Colors from '@/constants/colors';
-import { useUserStore } from '@/store/userStore';
-import { useSessionStore } from '@/store/sessionStore';
+import { useUser } from '@/contexts/UserContext';
+import { useSession } from '@/contexts/SessionContext';
 import Button from '@/components/Button';
 import Card from '@/components/Card';
 import AvatarPicker from '@/components/AvatarPicker';
@@ -10,8 +10,8 @@ import { languages } from '@/constants/languages';
 import { UserIcon, SettingsIcon, LogOutIcon, AwardIcon, CoffeeIcon, GlobeIcon, UsersIcon } from '@/components/icons';
 
 export default function ProfileScreen() {
-  const { user, updateProfile, updateAvatar, updateLanguage, updatePreferredConnectionLanguages, logout } = useUserStore();
-  const { sessions } = useSessionStore();
+  const { user, updateProfile, updateAvatar, updateLanguage, updatePreferredConnectionLanguages, logout } = useUser();
+  const { sessions } = useSession();
   
   const [name, setName] = useState(user?.name || '');
   const [preferredTime, setPreferredTime] = useState(user?.preferredFikaTime || '');

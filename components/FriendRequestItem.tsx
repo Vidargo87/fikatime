@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import Colors from '@/constants/colors';
-import { FriendRequest } from '@/store/friendsStore';
+import { FriendRequest } from '@/types/friends';
 import Card from './Card';
 import Button from './Button';
 import { CheckIcon, XIcon } from './icons';

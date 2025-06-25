@@ -2,29 +2,24 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, TextInput, ScrollView, Platform } from 'react-native';
 import { router } from 'expo-router';
 import Colors from '@/constants/colors';
-import { useUserStore } from '@/store/userStore';
+import { useUser } from '@/contexts/UserContext';
 import Button from '@/components/Button';
 import { CoffeeIcon } from '@/components/icons';
 
 export default function OnboardingScreen() {
-  const { setUser } = useUserStore();
-  const [name, setName] = useState('');
+  const { user, updateProfile } = useUser();
+  const [name, setName] = useState(user?.name || '');
   const [step, setStep] = useState(1);
-  const [preferredTime, setPreferredTime] = useState('');
+  const [preferredTime, setPreferredTime] = useState(user?.preferredFikaTime || '');
   
   const handleContinue = () => {
     if (step === 1 && name.trim()) {
       setStep(2);
     } else if (step === 2) {
-      // Create user profile
-      setUser({
-        id: Date.now().toString(),
+      // Update user profile
+      updateProfile({
         name: name.trim(),
-        fikaStreak: 0,
         preferredFikaTime: preferredTime,
-        isPremium: false,
-        totalSessions: 0,
-        joinedDate: new Date().toISOString(),
       });
       
       router.replace('/');
