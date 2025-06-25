@@ -122,18 +122,10 @@ export const useUserStore = create<UserState>()(
     {
       name: 'fika-user-storage',
       storage: createJSONStorage(() => AsyncStorage),
-      onRehydrateStorage: () => (state) => {
-        // Ensure user data is properly initialized after hydration
-        if (state?.user) {
-          state.user = {
-            ...state.user,
-            language: state.user.language || defaultLanguage,
-            preferredConnectionLanguages: state.user.preferredConnectionLanguages || [state.user.language || defaultLanguage],
-            allowFikaTimeVisible: state.user.allowFikaTimeVisible !== undefined ? state.user.allowFikaTimeVisible : true,
-            friends: state.user.friends || []
-          };
-        }
-      }
+      partialize: (state) => ({
+        user: state.user,
+        isLoggedIn: state.isLoggedIn
+      })
     }
   )
 );

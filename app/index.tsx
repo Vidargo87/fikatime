@@ -7,19 +7,22 @@ import Colors from '@/constants/colors';
 
 export default function IndexScreen() {
   const { isLoggedIn, user } = useUserStore();
-  const { refreshTopic } = useTopicStore();
+  const { dailyTopic, refreshTopic } = useTopicStore();
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     // Initialize the app
     const initializeApp = async () => {
       try {
-        // Check if we need to refresh the topic
-        refreshTopic();
+        // Make sure we have a topic
+        if (!dailyTopic) {
+          refreshTopic();
+        }
         
         // Short delay to allow stores to hydrate
         await new Promise(resolve => setTimeout(resolve, 1000));
         
+        // Navigate based on login state
         if (isLoggedIn && user) {
           router.replace('/(tabs)');
         } else {
@@ -27,14 +30,20 @@ export default function IndexScreen() {
         }
       } catch (error) {
         console.error('Error initializing app:', error);
+        // Ensure we navigate away from splash screen even if there's an error
         router.replace('/login');
       } finally {
         setIsLoading(false);
       }
     };
 
-    initializeApp();
-  }, [isLoggedIn, user, refreshTopic]);
+    // Small delay before initialization to ensure stores are ready
+    const timer = setTimeout(() => {
+      initializeApp();
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [isLoggedIn, user, dailyTopic]);
 
   if (isLoading) {
     return (

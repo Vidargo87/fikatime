@@ -25,14 +25,22 @@ export default function RootLayout() {
 
   useEffect(() => {
     if (error) {
-      console.error(error);
-      throw error;
+      console.error("Font loading error:", error);
     }
   }, [error]);
 
   useEffect(() => {
     if (loaded) {
-      SplashScreen.hideAsync();
+      // Add a small delay to ensure smooth transition
+      const hideSplash = async () => {
+        try {
+          await SplashScreen.hideAsync();
+        } catch (e) {
+          console.warn("Error hiding splash screen:", e);
+        }
+      };
+      
+      hideSplash();
     }
   }, [loaded]);
 
