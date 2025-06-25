@@ -176,7 +176,7 @@ export default function HomeScreen() {
       <Card variant="elevated" style={styles.topicCard}>
         <View style={styles.topicHeader}>
           <CoffeeIcon size={20} color={Colors.primary} />
-          <Text style={styles.topicTitle}>Today's Fika Topic</Text>
+          <Text style={styles.topicTitle}>Today&apos;s Fika Topic</Text>
         </View>
         <Text style={styles.topicText}>
           {dailyTopic || 'Take a moment to reflect on your day'}
