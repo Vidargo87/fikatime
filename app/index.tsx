@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { View, StyleSheet, ActivityIndicator, Text } from 'react-native';
+import { View, StyleSheet, ActivityIndicator, Text, Platform } from 'react-native';
 import { router } from 'expo-router';
 import { useUser } from '@/contexts/UserContext';
 import { useTopic } from '@/contexts/TopicContext';
@@ -25,7 +25,14 @@ export default function IndexScreen() {
         // Navigate based on login state
         if (!userLoading && !topicLoading) {
           if (isLoggedIn && user) {
-            router.replace('/(tabs)');
+            // On Android, add a small delay to ensure navigation works properly
+            if (Platform.OS === 'android') {
+              setTimeout(() => {
+                router.replace('/(tabs)');
+              }, 300);
+            } else {
+              router.replace('/(tabs)');
+            }
           } else {
             router.replace('/login');
           }
@@ -42,7 +49,7 @@ export default function IndexScreen() {
     // Small delay before initialization to ensure contexts are ready
     const timer = setTimeout(() => {
       initializeApp();
-    }, 500);
+    }, Platform.OS === 'android' ? 800 : 500);
 
     return () => clearTimeout(timer);
   }, [isLoggedIn, user, dailyTopic, userLoading, topicLoading]);

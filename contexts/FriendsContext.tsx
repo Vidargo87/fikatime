@@ -220,15 +220,16 @@ export const FriendsProvider: React.FC<{ children: React.ReactNode }> = ({ child
     // For demo purposes, return mock results after a delay
     return new Promise<any[]>((resolve) => {
       setTimeout(() => {
-        resolve(mockSearchResults.filter(user => 
+        const results = mockSearchResults.filter(user => 
           user.name.toLowerCase().includes(query.toLowerCase()) ||
           (user.email?.toLowerCase().includes(query.toLowerCase()) || false)
-        ));
+        );
+        resolve(results);
       }, 1000);
     });
   };
 
-  const sendFikaInvite = async (friendId: string, time?: string) => {
+  const sendFikaInvite = async (friendId: string, time?: string): Promise<boolean> => {
     const friend = friends.find(f => f.id === friendId);
     
     if (!friend) return false;

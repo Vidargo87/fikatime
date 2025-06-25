@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, Modal } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Modal, Platform } from 'react-native';
 import { router } from 'expo-router';
 import Colors from '@/constants/colors';
 import { useUser } from '@/contexts/UserContext';
@@ -169,28 +169,74 @@ export default function HomeScreen() {
         </View>
       )}
 
-      <Modal
-        visible={showLanguageModal}
-        transparent={true}
-        animationType="fade"
-      >
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            <LanguageFilter
-              selectedLanguages={selectedLanguages}
-              onLanguagesSelected={setSelectedLanguages}
-              onContinue={handleLanguagesContinue}
-              onCancel={handleLanguagesCancel}
-            />
-          </View>
-        </View>
-      </Modal>
+      {/* Use a separate component for modals on Android to avoid rendering issues */}
+      {Platform.OS === 'android' ? (
+        <>
+          {showLanguageModal && (
+            <Modal
+              visible={showLanguageModal}
+              transparent={true}
+              animationType="fade"
+              hardwareAccelerated={true}
+            >
+              <View style={styles.modalOverlay}>
+                <View style={styles.modalContent}>
+                  <LanguageFilter
+                    selectedLanguages={selectedLanguages}
+                    onLanguagesSelected={setSelectedLanguages}
+                    onContinue={handleLanguagesContinue}
+                    onCancel={handleLanguagesCancel}
+                  />
+                </View>
+              </View>
+            </Modal>
+          )}
 
-      {showFriendInviteModal && (
-        <FriendInviteModal
-          friends={friends}
-          onClose={() => setShowFriendInviteModal(false)}
-        />
+          {showFriendInviteModal && (
+            <Modal
+              visible={showFriendInviteModal}
+              transparent={true}
+              animationType="fade"
+              hardwareAccelerated={true}
+              onRequestClose={() => setShowFriendInviteModal(false)}
+            >
+              <View style={styles.modalOverlay}>
+                <View style={styles.modalContent}>
+                  <FriendInviteModal
+                    friends={friends}
+                    onClose={() => setShowFriendInviteModal(false)}
+                  />
+                </View>
+              </View>
+            </Modal>
+          )}
+        </>
+      ) : (
+        <>
+          <Modal
+            visible={showLanguageModal}
+            transparent={true}
+            animationType="fade"
+          >
+            <View style={styles.modalOverlay}>
+              <View style={styles.modalContent}>
+                <LanguageFilter
+                  selectedLanguages={selectedLanguages}
+                  onLanguagesSelected={setSelectedLanguages}
+                  onContinue={handleLanguagesContinue}
+                  onCancel={handleLanguagesCancel}
+                />
+              </View>
+            </View>
+          </Modal>
+
+          {showFriendInviteModal && (
+            <FriendInviteModal
+              friends={friends}
+              onClose={() => setShowFriendInviteModal(false)}
+            />
+          )}
+        </>
       )}
     </ScrollView>
   );
