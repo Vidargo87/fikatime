@@ -8,7 +8,6 @@ import { useSession } from '@/contexts/SessionContext';
 import { useUser } from '@/contexts/UserContext';
 import ProgressCircle from '@/components/ProgressCircle';
 import Button from '@/components/Button';
-import VideoChat from '@/components/VideoChat';
 import { PauseIcon, PlayIcon, XIcon, Volume2Icon, VolumeXIcon } from '@/components/icons';
 
 export default function TimerScreen() {
@@ -71,13 +70,7 @@ export default function TimerScreen() {
   };
 
   const isGroupSession = currentSession?.type === 'duo' || currentSession?.type === 'group';
-  const sessionType = currentSession?.type as 'duo' | 'group';
-  const participantCount = currentSession?.type === 'duo' ? 2 : 
-                          currentSession?.type === 'group' ? 4 : 1;
   
-  // Safely check if participants exist and have length
-  const hasParticipants = currentSession?.participants && currentSession.participants.length > 0;
-
   return (
     <LinearGradient
       colors={[Colors.primary + '40', Colors.background]}
@@ -105,11 +98,34 @@ export default function TimerScreen() {
         </Text>
         
         {isGroupSession ? (
-          <VideoChat 
-            sessionType={sessionType} 
-            participants={participantCount}
-            isGroupSession={hasParticipants}
-          />
+          <View style={styles.groupSessionContainer}>
+            <Text style={styles.groupSessionText}>
+              {currentSession?.type === 'duo' ? 'Duo' : 'Group'} Session
+            </Text>
+            <Text style={styles.groupSessionSubtext}>
+              Waiting for participants to join...
+            </Text>
+            <View style={styles.timerContainer}>
+              <ProgressCircle
+                progress={progress}
+                size={240}
+                strokeWidth={12}
+                text={formatTime(timeRemaining)}
+                textSize={40}
+              />
+              
+              <TouchableOpacity 
+                style={styles.playPauseButton}
+                onPress={toggleTimer}
+              >
+                {isActive ? (
+                  <PauseIcon size={32} color={Colors.primary} />
+                ) : (
+                  <PlayIcon size={32} color={Colors.primary} />
+                )}
+              </TouchableOpacity>
+            </View>
+          </View>
         ) : (
           <View style={styles.timerContainer}>
             <ProgressCircle
@@ -188,6 +204,21 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: Colors.text,
     marginBottom: 40,
+  },
+  groupSessionContainer: {
+    alignItems: 'center',
+    marginBottom: 60,
+  },
+  groupSessionText: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: Colors.primary,
+    marginBottom: 8,
+  },
+  groupSessionSubtext: {
+    fontSize: 14,
+    color: Colors.textLight,
+    marginBottom: 20,
   },
   timerContainer: {
     alignItems: 'center',
