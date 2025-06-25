@@ -4,7 +4,7 @@ import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import { LogBox } from "react-native";
-import { StatusBar } from "expo-status-bar"; // Changed from react-native to expo-status-bar
+import { StatusBar } from "expo-status-bar";
 import Colors from "@/constants/colors";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { trpc, trpcClient } from "@/lib/trpc";
@@ -13,7 +13,8 @@ import { AppProviders } from "@/contexts";
 // Ignore specific warnings that might be causing issues
 LogBox.ignoreLogs([
   'Non-serializable values were found in the navigation state',
-  'Sending `onAnimatedValueUpdate` with no listeners registered'
+  'Sending `onAnimatedValueUpdate` with no listeners registered',
+  'Text strings must be rendered within a <Text> component'
 ]);
 
 export const unstable_settings = {
@@ -62,7 +63,7 @@ export default function RootLayout() {
 function RootLayoutNav() {
   return (
     <>
-      <StatusBar style="dark" /> {/* Changed from barStyle to style for expo-status-bar */}
+      <StatusBar style="dark" />
       <AppProviders>
         <trpc.Provider client={trpcClient} queryClient={queryClient}>
           <QueryClientProvider client={queryClient}>

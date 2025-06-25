@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, Modal, Platform } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Modal, Platform, RefreshControl } from 'react-native';
 import { router } from 'expo-router';
 import Colors from '@/constants/colors';
 import { useUser } from '@/contexts/UserContext';
@@ -11,12 +11,12 @@ import Card from '@/components/Card';
 import Button from '@/components/Button';
 import LanguageFilter from '@/components/LanguageFilter';
 import FriendInviteModal from '@/components/FriendInviteModal';
-import { CoffeeIcon, UserPlusIcon } from '@/components/icons';
+import { CoffeeIcon, UserPlusIcon, AwardIcon } from '@/components/icons';
 
 export default function HomeScreen() {
   const { user, updateProfile } = useUser();
   const { startSession } = useSession();
-  const { dailyTopic } = useTopic();
+  const { dailyTopic, refreshTopic } = useTopic();
   const { friends } = useFriends();
   
   const [showLanguageModal, setShowLanguageModal] = useState(false);
@@ -25,6 +25,8 @@ export default function HomeScreen() {
   const [selectedLanguages, setSelectedLanguages] = useState<string[]>(
     user?.preferredConnectionLanguages || [user?.language || 'en']
   );
+  const [refreshing, setRefreshing] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   
   useEffect(() => {
     if (user?.preferredConnectionLanguages) {
@@ -32,13 +34,26 @@ export default function HomeScreen() {
     }
   }, [user?.preferredConnectionLanguages]);
 
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    refreshTopic();
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 1000);
+  }, [refreshTopic]);
+
   const handleStartSoloFika = () => {
+    setIsLoading(true);
     startSession({
       type: 'solo',
       duration: 10,
       topic: dailyTopic
     });
-    router.push('/timer');
+    
+    setTimeout(() => {
+      setIsLoading(false);
+      router.push('/timer');
+    }, 500);
   };
 
   const handleStartDuoFika = () => {
@@ -63,13 +78,18 @@ export default function HomeScreen() {
 
     // Start the session with the selected type
     if (sessionType) {
+      setIsLoading(true);
       startSession({
         type: sessionType,
         duration: sessionType === 'duo' ? 15 : 20,
         topic: dailyTopic
       });
       setShowLanguageModal(false);
-      router.push('/timer');
+      
+      setTimeout(() => {
+        setIsLoading(false);
+        router.push('/timer');
+      }, 500);
     }
   };
 
@@ -82,36 +102,88 @@ export default function HomeScreen() {
     setShowFriendInviteModal(true);
   };
 
+  const getStreakMessage = () => {
+    const streak = user?.fikaStreak || 0;
+    if (streak === 0) {
+      return "Start your first Fika today!";
+    } else if (streak === 1) {
+      return "🔥 1 day streak! Keep it going!";
+    } else if (streak < 7) {
+      return `🔥 ${streak} day streak! You're building a great habit!`;
+    } else if (streak < 30) {
+      return `🔥 ${streak} day streak! Amazing consistency!`;
+    } else {
+      return `🔥 ${streak} day streak! You're a Fika master!`;
+    }
+  };
+
+  const getWelcomeMessage = () => {
+    const hour = new Date().getHours();
+    const name = user?.name || 'Friend';
+    
+    if (hour < 12) {
+      return `Good morning, ${name}`;
+    } else if (hour < 17) {
+      return `Good afternoon, ${name}`;
+    } else {
+      return `Good evening, ${name}`;
+    }
+  };
+
   // Ensure we have valid data before rendering
   if (!user) {
     return (
       <View style={styles.container}>
         <View style={styles.loadingContainer}>
-          <Text style={styles.loadingText}>Loading...</Text>
+          <CoffeeIcon size={48} color={Colors.primary} />
+          <Text style={styles.loadingText}>Loading your Fika...</Text>
         </View>
       </View>
     );
   }
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+    <ScrollView 
+      style={styles.container} 
+      contentContainerStyle={styles.content}
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }
+    >
       <View style={styles.header}>
         <Text style={styles.greeting}>
-          {user.name ? `Hello, ${user.name}` : 'Welcome to FikaTime'}
+          {getWelcomeMessage()}
         </Text>
         <Text style={styles.subtitle}>
           Take a mindful break and boost your wellbeing
         </Text>
       </View>
 
+      {/* Streak Display */}
+      <Card variant="elevated" style={styles.streakCard}>
+        <View style={styles.streakContent}>
+          <Text style={styles.streakMessage}>{getStreakMessage()}</Text>
+          {user.fikaStreak > 0 && (
+            <View style={styles.streakBadge}>
+              <Text style={styles.streakNumber}>{user.fikaStreak}</Text>
+              <Text style={styles.streakLabel}>days</Text>
+            </View>
+          )}
+        </View>
+      </Card>
+
+      {/* Daily Topic */}
       <Card variant="elevated" style={styles.topicCard}>
         <View style={styles.topicHeader}>
           <CoffeeIcon size={20} color={Colors.primary} />
-          <Text style={styles.topicTitle}>Today's Topic</Text>
+          <Text style={styles.topicTitle}>Today's Fika Topic</Text>
         </View>
-        <Text style={styles.topicText}>{dailyTopic || 'Take a moment to reflect'}</Text>
+        <Text style={styles.topicText}>
+          {dailyTopic || 'Take a moment to reflect on your day'}
+        </Text>
       </Card>
 
+      {/* Action Buttons */}
       <View style={styles.actionButtons}>
         <Button
           title="Invite a Friend"
@@ -122,6 +194,7 @@ export default function HomeScreen() {
         />
       </View>
 
+      {/* Fika Options */}
       <Text style={styles.sectionTitle}>Choose Your Fika</Text>
       
       <FikaCard
@@ -146,11 +219,15 @@ export default function HomeScreen() {
         onPress={handleStartGroupFika}
       />
 
+      {/* Premium Upgrade Card */}
       {!user.isPremium && (
         <Card style={styles.premiumCard}>
-          <Text style={styles.premiumTitle}>Upgrade to Premium</Text>
+          <View style={styles.premiumHeader}>
+            <AwardIcon size={24} color={Colors.secondary} />
+            <Text style={styles.premiumTitle}>Upgrade to Premium</Text>
+          </View>
           <Text style={styles.premiumDescription}>
-            Unlock group sessions, custom themes, and more!
+            Unlock group sessions, custom themes, advanced analytics, and more!
           </Text>
           <Button 
             title="Get Premium" 
@@ -161,15 +238,26 @@ export default function HomeScreen() {
         </Card>
       )}
 
-      {user.fikaStreak && user.fikaStreak > 0 && (
-        <View style={styles.streakContainer}>
-          <Text style={styles.streakText}>
-            🔥 {user.fikaStreak} day{user.fikaStreak !== 1 ? 's' : ''} streak! Keep it up!
-          </Text>
+      {/* Quick Stats */}
+      <Card style={styles.statsCard}>
+        <Text style={styles.statsTitle}>Your Fika Journey</Text>
+        <View style={styles.statsGrid}>
+          <View style={styles.statItem}>
+            <Text style={styles.statValue}>{user.totalSessions || 0}</Text>
+            <Text style={styles.statLabel}>Total Sessions</Text>
+          </View>
+          <View style={styles.statItem}>
+            <Text style={styles.statValue}>{user.fikaStreak || 0}</Text>
+            <Text style={styles.statLabel}>Current Streak</Text>
+          </View>
+          <View style={styles.statItem}>
+            <Text style={styles.statValue}>{friends.length}</Text>
+            <Text style={styles.statLabel}>Fika Friends</Text>
+          </View>
         </View>
-      )}
+      </Card>
 
-      {/* Use a separate component for modals on Android to avoid rendering issues */}
+      {/* Modals */}
       {Platform.OS === 'android' ? (
         <>
           {showLanguageModal && (
@@ -238,6 +326,22 @@ export default function HomeScreen() {
           )}
         </>
       )}
+
+      {/* Loading Overlay */}
+      {isLoading && (
+        <Modal
+          visible={isLoading}
+          transparent={true}
+          animationType="fade"
+        >
+          <View style={styles.loadingOverlay}>
+            <View style={styles.loadingModal}>
+              <CoffeeIcon size={48} color={Colors.primary} />
+              <Text style={styles.loadingModalText}>Starting your Fika...</Text>
+            </View>
+          </View>
+        </Modal>
+      )}
     </ScrollView>
   );
 }
@@ -259,6 +363,7 @@ const styles = StyleSheet.create({
   loadingText: {
     fontSize: 16,
     color: Colors.textLight,
+    marginTop: 16,
   },
   header: {
     marginBottom: 24,
@@ -272,6 +377,37 @@ const styles = StyleSheet.create({
   subtitle: {
     fontSize: 16,
     color: Colors.textLight,
+  },
+  streakCard: {
+    marginBottom: 16,
+    backgroundColor: Colors.success + '15',
+  },
+  streakContent: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  streakMessage: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: Colors.text,
+    flex: 1,
+  },
+  streakBadge: {
+    alignItems: 'center',
+    backgroundColor: Colors.success,
+    borderRadius: 20,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+  },
+  streakNumber: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#FFFFFF',
+  },
+  streakLabel: {
+    fontSize: 12,
+    color: '#FFFFFF',
   },
   topicCard: {
     marginBottom: 24,
@@ -307,14 +443,20 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   premiumCard: {
-    backgroundColor: Colors.accent + '30', // 30% opacity
+    backgroundColor: Colors.accent + '30',
     marginTop: 16,
+    marginBottom: 16,
+  },
+  premiumHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
   },
   premiumTitle: {
     fontSize: 18,
     fontWeight: '600',
     color: Colors.text,
-    marginBottom: 8,
+    marginLeft: 8,
   },
   premiumDescription: {
     fontSize: 14,
@@ -324,17 +466,33 @@ const styles = StyleSheet.create({
   premiumButton: {
     alignSelf: 'flex-start',
   },
-  streakContainer: {
-    marginTop: 24,
-    padding: 12,
-    backgroundColor: Colors.success + '20', // 20% opacity
-    borderRadius: 12,
-    alignItems: 'center',
+  statsCard: {
+    marginTop: 16,
   },
-  streakText: {
+  statsTitle: {
     fontSize: 16,
     fontWeight: '600',
     color: Colors.text,
+    marginBottom: 16,
+  },
+  statsGrid: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  statItem: {
+    alignItems: 'center',
+    flex: 1,
+  },
+  statValue: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: Colors.primary,
+  },
+  statLabel: {
+    fontSize: 12,
+    color: Colors.textLight,
+    marginTop: 4,
+    textAlign: 'center',
   },
   modalOverlay: {
     flex: 1,
@@ -346,5 +504,22 @@ const styles = StyleSheet.create({
   modalContent: {
     width: '100%',
     maxWidth: 500,
+  },
+  loadingOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadingModal: {
+    backgroundColor: Colors.cardBackground,
+    borderRadius: 16,
+    padding: 32,
+    alignItems: 'center',
+  },
+  loadingModalText: {
+    fontSize: 16,
+    color: Colors.text,
+    marginTop: 16,
   },
 });

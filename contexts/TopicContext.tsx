@@ -15,38 +15,53 @@ const TopicContext = createContext<TopicContextType | undefined>(undefined);
 const isNewDay = (lastUpdated: string | null): boolean => {
   if (!lastUpdated) return true;
   
-  const lastDate = new Date(lastUpdated).setHours(0, 0, 0, 0);
-  const today = new Date().setHours(0, 0, 0, 0);
+  const lastDate = new Date(lastUpdated).toDateString();
+  const today = new Date().toDateString();
   
-  return lastDate < today;
+  return lastDate !== today;
 };
 
 export const TopicProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [dailyTopic, setDailyTopic] = useState<string>(getTodayTopic());
-  const [lastUpdated, setLastUpdated] = useState<string | null>(new Date().toISOString());
+  const [dailyTopic, setDailyTopic] = useState<string>('');
+  const [lastUpdated, setLastUpdated] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   // Load topic data from AsyncStorage on mount
   useEffect(() => {
     const loadTopicData = async () => {
       try {
+        console.log('Loading topic data from storage');
         const topicData = await AsyncStorage.getItem('fika-topic-data');
+        
         if (topicData) {
+          console.log('Topic data found in storage');
           const parsedData = JSON.parse(topicData);
           
           // Check if we need to update the topic for a new day
           if (isNewDay(parsedData.lastUpdated) || !parsedData.dailyTopic) {
+            console.log('Getting new topic for today');
             const newTopic = getTodayTopic();
             setDailyTopic(newTopic);
             setLastUpdated(new Date().toISOString());
           } else {
+            console.log('Using existing topic');
             setDailyTopic(parsedData.dailyTopic);
             setLastUpdated(parsedData.lastUpdated);
           }
+        } else {
+          console.log('No topic data found, creating new');
+          const newTopic = getTodayTopic();
+          setDailyTopic(newTopic);
+          setLastUpdated(new Date().toISOString());
         }
       } catch (error) {
         console.error('Error loading topic data:', error);
+        // Fallback to getting a new topic
+        const newTopic = getTodayTopic();
+        setDailyTopic(newTopic);
+        setLastUpdated(new Date().toISOString());
       } finally {
+        console.log('Topic loading complete');
         setIsLoading(false);
       }
     };
@@ -58,19 +73,21 @@ export const TopicProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   useEffect(() => {
     const saveTopicData = async () => {
       try {
-        const topicData = JSON.stringify({ dailyTopic, lastUpdated });
-        await AsyncStorage.setItem('fika-topic-data', topicData);
+        if (!isLoading && dailyTopic) {
+          console.log('Saving topic data to storage');
+          const topicData = JSON.stringify({ dailyTopic, lastUpdated });
+          await AsyncStorage.setItem('fika-topic-data', topicData);
+        }
       } catch (error) {
         console.error('Error saving topic data:', error);
       }
     };
 
-    if (!isLoading) {
-      saveTopicData();
-    }
+    saveTopicData();
   }, [dailyTopic, lastUpdated, isLoading]);
 
   const refreshTopic = () => {
+    console.log('Refreshing topic');
     const newTopic = resetTodayTopic();
     setDailyTopic(newTopic);
     setLastUpdated(new Date().toISOString());

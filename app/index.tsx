@@ -4,6 +4,7 @@ import { router } from 'expo-router';
 import { useUser } from '@/contexts/UserContext';
 import { useTopic } from '@/contexts/TopicContext';
 import Colors from '@/constants/colors';
+import { CoffeeIcon } from '@/components/icons';
 
 export default function IndexScreen() {
   const { isLoggedIn, user, isLoading: userLoading } = useUser();
@@ -15,33 +16,34 @@ export default function IndexScreen() {
     // Initialize the app
     const initializeApp = async () => {
       try {
+        console.log('Initializing app...');
+        
         // Make sure we have a topic
         if (!dailyTopic) {
+          console.log('Refreshing topic...');
           refreshTopic();
         }
         
-        // Short delay to allow contexts to initialize
-        await new Promise(resolve => setTimeout(resolve, 500));
+        // Wait for contexts to be ready
+        let attempts = 0;
+        const maxAttempts = 20; // 2 seconds max
+        
+        while ((userLoading || topicLoading) && attempts < maxAttempts) {
+          await new Promise(resolve => setTimeout(resolve, 100));
+          attempts++;
+        }
+        
+        console.log('Contexts ready, navigating...');
         
         // Navigate based on login state
-        if (!userLoading && !topicLoading) {
-          if (isLoggedIn && user) {
-            console.log('Navigating to tabs, user is logged in');
-            setNavigationAttempted(true);
-            
-            // On Android, use a different approach to ensure navigation works
-            if (Platform.OS === 'android') {
-              setTimeout(() => {
-                router.replace('/(tabs)');
-              }, 300);
-            } else {
-              router.replace('/(tabs)');
-            }
-          } else {
-            console.log('Navigating to login, user is not logged in');
-            setNavigationAttempted(true);
-            router.replace('/login');
-          }
+        if (isLoggedIn && user) {
+          console.log('User is logged in, navigating to tabs');
+          setNavigationAttempted(true);
+          router.replace('/(tabs)');
+        } else {
+          console.log('User not logged in, navigating to login');
+          setNavigationAttempted(true);
+          router.replace('/login');
         }
       } catch (error) {
         console.error('Error initializing app:', error);
@@ -53,42 +55,39 @@ export default function IndexScreen() {
       }
     };
 
-    // Small delay before initialization to ensure contexts are ready
+    // Start initialization after a short delay to ensure contexts are mounted
     const timer = setTimeout(() => {
       initializeApp();
-    }, Platform.OS === 'android' ? 800 : 500);
+    }, 300);
 
     return () => clearTimeout(timer);
   }, [isLoggedIn, user, dailyTopic, userLoading, topicLoading]);
 
-  // Safety mechanism: if we're still on this screen after 3 seconds, force navigation
+  // Safety mechanism: if we're still on this screen after 4 seconds, force navigation
   useEffect(() => {
     const safetyTimer = setTimeout(() => {
       if (!navigationAttempted) {
         console.log('Safety timer triggered - forcing navigation');
+        setNavigationAttempted(true);
         if (isLoggedIn && user) {
           router.replace('/(tabs)');
         } else {
           router.replace('/login');
         }
       }
-    }, 3000);
+    }, 4000);
 
     return () => clearTimeout(safetyTimer);
   }, [navigationAttempted, isLoggedIn, user]);
 
-  if (isLoading || userLoading || topicLoading) {
-    return (
-      <View style={styles.container}>
-        <ActivityIndicator size="large" color={Colors.primary} />
-        <Text style={styles.loadingText}>Loading FikaTime...</Text>
-      </View>
-    );
-  }
-
   return (
     <View style={styles.container}>
-      <ActivityIndicator size="large" color={Colors.primary} />
+      <CoffeeIcon size={64} color={Colors.primary} />
+      <Text style={styles.appName}>FikaTime</Text>
+      <ActivityIndicator size="large" color={Colors.primary} style={styles.loader} />
+      <Text style={styles.loadingText}>
+        {userLoading || topicLoading ? 'Loading your Fika...' : 'Starting FikaTime...'}
+      </Text>
     </View>
   );
 }
@@ -99,10 +98,21 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: Colors.background,
+    padding: 20,
+  },
+  appName: {
+    fontSize: 28,
+    fontWeight: '700',
+    color: Colors.primary,
+    marginTop: 16,
+    marginBottom: 32,
+  },
+  loader: {
+    marginBottom: 16,
   },
   loadingText: {
-    marginTop: 16,
     fontSize: 16,
     color: Colors.textLight,
+    textAlign: 'center',
   },
 });
