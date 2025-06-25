@@ -10,7 +10,7 @@ import {
   ScrollView 
 } from 'react-native';
 import Colors from '@/constants/colors';
-import { Friend } from '@/store/friendsStore';
+import { Friend } from '@/types/friends';
 import Button from './Button';
 import Card from './Card';
 import { XIcon, CheckIcon, UsersIcon } from './icons';

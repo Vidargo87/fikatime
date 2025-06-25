@@ -28,8 +28,7 @@ export default function TabLayout() {
           fontWeight: '600',
           color: Colors.text,
         },
-        // Ensure Android animations work properly
-        animationEnabled: Platform.OS !== 'android',
+        // Remove the animationEnabled property as it's not supported
       }}
     >
       <Tabs.Screen

@@ -11,7 +11,7 @@ import {
   Platform
 } from 'react-native';
 import Colors from '@/constants/colors';
-import { Friend } from '@/store/friendsStore';
+import { Friend } from '@/types/friends';
 import Card from './Card';
 import Button from './Button';
 import { XIcon, CoffeeIcon, ClockIcon, CalendarIcon } from './icons';
